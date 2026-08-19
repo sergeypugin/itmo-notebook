@@ -33,7 +33,7 @@ jobs:
         run: |
           sed -i "s|baseUrl:.*|baseUrl: ${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}|" quartz.config.yaml
       - name: Build Quartz
-        run: npx quartz build
+        run: npx quartz build -d itmo-notebook
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
