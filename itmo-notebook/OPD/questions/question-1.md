@@ -1,4 +1,6 @@
 ---
+title: Вопрос 1
+ticket: 1
 theme: data-representation
 author: Luisa
 ---

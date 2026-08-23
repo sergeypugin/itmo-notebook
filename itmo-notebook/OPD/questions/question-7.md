@@ -1,4 +1,6 @@
 ---
+title: Вопрос 7
+ticket: 7
 theme: unix-os-basics
 author: Luisa
 ---

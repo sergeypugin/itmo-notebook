@@ -1,4 +1,6 @@
 ---
+title: Вопрос 2
+ticket: 2
 theme: data-representation
 author: Sergey
 ---

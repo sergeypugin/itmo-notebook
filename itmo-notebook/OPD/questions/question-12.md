@@ -1,4 +1,6 @@
 ---
+title: Вопрос 12
+ticket: 12
 theme: bcomp-programming
 author: Luisa
 ---

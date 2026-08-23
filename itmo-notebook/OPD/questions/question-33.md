@@ -1,4 +1,6 @@
 ---
+title: Вопрос 33
+ticket: 15
 theme: networks
 author: Luisa
 ---

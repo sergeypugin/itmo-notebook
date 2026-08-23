@@ -1,4 +1,6 @@
 ---
+title: Вопрос 37
+ticket: 20
 theme: io-interfaces
 author: Sergey
 ---

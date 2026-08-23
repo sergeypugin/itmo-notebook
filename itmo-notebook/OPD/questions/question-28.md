@@ -1,4 +1,6 @@
 ---
+title: Вопрос 28
+ticket: 13
 theme: memory-architecture
 author: Luisa
 ---

@@ -1,4 +1,6 @@
 ---
+title: Вопрос 29
+ticket: 11
 theme: memory-architecture
 author: Luisa
 ---

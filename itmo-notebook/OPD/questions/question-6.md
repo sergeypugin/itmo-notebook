@@ -1,4 +1,6 @@
 ---
+title: Вопрос 6
+ticket: 6
 theme: unix-os-basics
 author: Luisa
 ---

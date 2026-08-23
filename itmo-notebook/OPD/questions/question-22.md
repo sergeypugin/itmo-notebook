@@ -1,4 +1,6 @@
 ---
+title: Вопрос 22
+ticket: 4
 theme: microcode
 author: Sergey
 ---

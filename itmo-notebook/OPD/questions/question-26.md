@@ -1,4 +1,6 @@
 ---
+title: Вопрос 26
+ticket: 18
 theme: memory-architecture
 author: Sergey
 ---

@@ -1,4 +1,6 @@
 ---
+title: Вопрос 9
+ticket: 9
 theme: bcomp-programming
 author: Sergey
 ---

@@ -1,4 +1,6 @@
 ---
+title: Вопрос 18
+ticket: 17
 theme: bcomp-programming
 author: Sergey
 ---

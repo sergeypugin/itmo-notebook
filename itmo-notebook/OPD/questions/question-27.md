@@ -1,4 +1,6 @@
 ---
+title: Вопрос 27
+ticket: 7
 theme: memory-architecture
 author: Luisa
 ---

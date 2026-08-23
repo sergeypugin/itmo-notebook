@@ -1,4 +1,6 @@
 ---
+title: Вопрос 34
+ticket: 6
 theme: io-interfaces
 author: Luisa
 ---

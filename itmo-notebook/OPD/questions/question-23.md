@@ -1,4 +1,6 @@
 ---
+title: Вопрос 23
+ticket: 8
 theme: memory-architecture
 author: Luisa
 ---

@@ -1,4 +1,6 @@
 ---
+title: Вопрос 31
+ticket: 16
 theme: networks
 author: Luisa
 ---

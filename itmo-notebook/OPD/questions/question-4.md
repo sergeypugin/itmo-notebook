@@ -1,4 +1,6 @@
 ---
+title: Вопрос 4
+ticket: 4
 theme: microcode
 author: Sergey
 ---

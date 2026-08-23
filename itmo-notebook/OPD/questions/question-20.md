@@ -1,4 +1,6 @@
 ---
+title: Вопрос 20
+ticket: 19
 theme: microcode
 author: Sergey
 ---

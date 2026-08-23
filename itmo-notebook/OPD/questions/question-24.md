@@ -1,4 +1,6 @@
 ---
+title: Вопрос 24
+ticket: 17
 theme: memory-architecture
 author: Sergey
 ---
