@@ -9,80 +9,107 @@ filters:
     - file.inFolder("matan/questions")
     - file.name.startsWith("question")
     - file.ext == "md"
+formulas:
+  q_num: 'number(file.name.replace("question-", "").replace("-original", ""))'
+properties:
+  formula.q_num:
+    displayName: №
 views:
   - type: table
     name: Все вопросы
     order:
-      - file.name
+      - formula.q_num
       - title
       - author
     sort:
-      - property: file.name
+      - property: formula.q_num
         direction: ASC
-      - property: title
-        direction: DESC
   - type: table
     name: Sergey
     filters:
       and:
         - note.author == "Sergey"
     order:
-      - file.name
+      - formula.q_num
       - title
+    sort:
+      - property: formula.q_num
+        direction: ASC
   - type: table
     name: Luisa
     filters:
       and:
         - note.author == "Luisa"
     order:
-      - file.name
+      - formula.q_num
       - title
+    sort:
+      - property: formula.q_num
+        direction: ASC
   - type: table
     name: Lesha
     filters:
       and:
         - note.author == "Lesha"
     order:
-      - file.name
+      - formula.q_num
       - title
+    sort:
+      - property: formula.q_num
+        direction: ASC
   - type: table
     name: Ivan
     filters:
       and:
         - note.author == "Ivan"
     order:
-      - file.name
+      - formula.q_num
       - title
+    sort:
+      - property: formula.q_num
+        direction: ASC
   - type: table
     name: Oleg
     filters:
       and:
         - note.author == "Oleg"
     order:
-      - file.name
+      - formula.q_num
       - title
+    sort:
+      - property: formula.q_num
+        direction: ASC
   - type: table
     name: Dimas
     filters:
       and:
         - note.author == "Dimas"
     order:
-      - file.name
+      - formula.q_num
       - title
+    sort:
+      - property: formula.q_num
+        direction: ASC
   - type: table
     name: Nikita
     filters:
       and:
         - note.author == "Nikita"
     order:
-      - file.name
+      - formula.q_num
       - title
+    sort:
+      - property: formula.q_num
+        direction: ASC
   - type: table
     name: Romchik
     filters:
       and:
         - note.author == "Romchik"
     order:
-      - file.name
+      - formula.q_num
       - title
+    sort:
+      - property: formula.q_num
+        direction: ASC
 ```

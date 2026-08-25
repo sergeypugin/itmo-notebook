@@ -8,6 +8,9 @@ filters:
   and:
     - file.ext == "md"
     - file.inFolder("OPD/questions")
+    - file.name.startsWith("question")
+formulas:
+  q_num: 'number(file.name.replace("question-", "").replace("-original", ""))'
 properties:
   ticket:
     displayName: № билета
@@ -26,11 +29,8 @@ views:
       - theme
       - author
     sort:
-      - property: ticket
+      - property: formula.q_num
         direction: ASC
-      - property: file.name
-        direction: ASC
-
   - type: table
     name: Представление информации
     filters:
@@ -41,9 +41,8 @@ views:
       - title
       - author
     sort:
-      - property: ticket
+      - property: formula.q_num
         direction: ASC
-
   - type: table
     name: Основы ОС Unix
     filters:
@@ -54,9 +53,8 @@ views:
       - title
       - author
     sort:
-      - property: ticket
+      - property: formula.q_num
         direction: ASC
-
   - type: table
     name: БЭВМ
     filters:
@@ -67,9 +65,8 @@ views:
       - title
       - author
     sort:
-      - property: ticket
+      - property: formula.q_num
         direction: ASC
-
   - type: table
     name: Микрокод
     filters:
@@ -80,9 +77,8 @@ views:
       - title
       - author
     sort:
-      - property: ticket
+      - property: formula.q_num
         direction: ASC
-
   - type: table
     name: Архитектура памяти
     filters:
@@ -93,9 +89,8 @@ views:
       - title
       - author
     sort:
-      - property: ticket
+      - property: formula.q_num
         direction: ASC
-
   - type: table
     name: Сети
     filters:
@@ -106,9 +101,8 @@ views:
       - title
       - author
     sort:
-      - property: ticket
+      - property: formula.q_num
         direction: ASC
-
   - type: table
     name: Интерфейсы ввода-вывода
     filters:
@@ -119,6 +113,6 @@ views:
       - title
       - author
     sort:
-      - property: ticket
+      - property: formula.q_num
         direction: ASC
 ```
