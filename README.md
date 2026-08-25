@@ -26,7 +26,7 @@
 
 Проект развивается совместными усилиями студентов и депендабота:
 
-[![Contributors](https://contrib.rocks/image?repo=sergeypugin/itmo-notebook)](https://github.com/sergeypugin/itmo-notebook/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=sergeypugin/itmo-notebook&max=100&columns=10)](https://github.com/sergeypugin/itmo-notebook/graphs/contributors)
 
 ## Как внести вклад
 
