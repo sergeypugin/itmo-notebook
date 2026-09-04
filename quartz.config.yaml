@@ -202,7 +202,7 @@ plugins:
     enabled: true
     options:
       links:
-        GitHub: https://github.com/sergeypugin/quartz-ready-template
+        "⭐ Поддержать проект звездой на GitHub": https://github.com/sergeypugin/itmo-notebook
     layout:
       position: footer
       priority: 50
