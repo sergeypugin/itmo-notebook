@@ -1,12 +1,15 @@
+---
+title: Вопросы
+---
 # Вопросы
 
-Вопросы на экзамен второго семестра были даны в [[questions.pdf|этом файле]].
+Вопросы на экзамен второго семестра были даны в [[matan/sem2/_questions.pdf|этом файле]].
 
 Список расписанных вопросов:
 ```base
 filters:
   and:
-    - file.inFolder("matan/questions")
+    - file.inFolder("matan/sem2")
     - file.name.startsWith("question")
     - file.ext == "md"
 formulas:

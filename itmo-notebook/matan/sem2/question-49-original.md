@@ -1,10 +1,13 @@
 ---
-title: Полиномы Лежандра и разложения по ним
+title: Полиномы Лежандра и разложения по ним (подробно)
 author: Ivan
 links:
   - "[Кудрявцев_Л_Д_Математический_анализ_том_2_2.pdf](https://drive.google.com/file/d/1A9iwsI2Uh7gHamAWOprOR81lh0qZg71d/view?usp=drivesdk)"
   - "[Лекции по матфизу.pdf](https://drive.google.com/file/d/1Xu5n78SZIMKfgyqAhqj2XH28_rptd8Oy/view?usp=drivesdk)"
 ---
+
+Упрощённую версию можно найти [[question-49|в этой заметке]].
+
 ## Полиномы Лежандра и разложения по ним
 
 ### 1. Происхождение и определение через ортогонализацию Грамма–Шмидта

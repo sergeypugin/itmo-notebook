@@ -5,7 +5,7 @@ links:
   - "[Теорема Вейерштрасса и полиномы Бернштейна.pdf](https://drive.google.com/file/d/1H1LWsHa2clUJYnL7D_7YagxLoLMxX-lu/view?usp=drivesdk)"
 ---
 
-Данный билет - упрощённая версия [[question-48-original]].
+Данный билет - упрощённая версия [[question-48-original|этой заметки]].
 
 ## Теорема Вейерштрасса о приближении многочленами
 

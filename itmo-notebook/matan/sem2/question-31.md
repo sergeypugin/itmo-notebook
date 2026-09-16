@@ -2,8 +2,8 @@
 title: Признаки Абеля и Дирихле сходимости рядов
 author: Sergey
 links:
-  - "[[matan/questions/question-30|question-30]]"
-  - "[[matan/questions/question-31|question-31]]"
+  - "[[matan/sem2/question-30|вопрос 30]]"
+  - "[[matan/sem2/question-31|вопрос 31]]"
 ---
 ## Признаки Абеля и Дирихле
 

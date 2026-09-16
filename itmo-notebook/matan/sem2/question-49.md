@@ -4,7 +4,8 @@ author: Ivan
 links:
   - "[Кудрявцев_Л_Д_Математический_анализ_том_2_2.pdf](https://drive.google.com/file/d/1A9iwsI2Uh7gHamAWOprOR81lh0qZg71d/view?usp=drivesdk)"
 ---
-Данный билет - упрощённая версия [[question-49-original]].
+
+Данный билет - упрощённая версия [[question-49-original|этой заметки]].
 
 ## Полиномы Лежандра и разложения по ним
 

@@ -1,11 +1,14 @@
 ---
-title: Полиномы Чебышева и разложения по ним
+title: Полиномы Чебышева и разложения по ним (подробно)
 author: Ivan
 links:
   - "[Задачник Кудрявцева.pdf](https://drive.google.com/file/d/1rKYW4ZFIc6EXMlMPN-_fIwU03Klpadq5/view?usp=drivesdk)"
   - "[Кудрявцев_Л_Д_Математический_анализ_том_2_2.pdf](https://drive.google.com/file/d/1A9iwsI2Uh7gHamAWOprOR81lh0qZg71d/view?usp=drivesdk)"
   - "[Никольский 1 том.pdf](https://drive.google.com/file/d/1GsOuXkK0v_N22dWdAFFCVkGQasAc1g8u/view?usp=drivesdk)"
 ---
+
+Упрощённую версию можно найти [[question-50|в этой заметке]].
+
 ## Главное про многочлены Чебышёва первого и второго рода
 
 Многочлены Чебышёва представляют собой классические системы ортогональных многочленов, заданных на отрезке $[-1, 1]$. 
