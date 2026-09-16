@@ -1,6 +1,8 @@
 import fs from "fs"
 import path from "path"
-import { execSync } from "child_process"
+import {
+  execSync
+} from "child_process"
 import YAML from "yaml"
 
 const LOCKFILE_PATH = path.join(process.cwd(), "quartz.lock.json")
@@ -42,7 +44,9 @@ function readFileAsData(filePath) {
 function writeDataToFile(filePath, data) {
   if (filePath.endsWith(".yaml") || filePath.endsWith(".yml")) {
     const header = "# yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json\n"
-    fs.writeFileSync(filePath, header + YAML.stringify(data, { lineWidth: 120 }))
+    fs.writeFileSync(filePath, header + YAML.stringify(data, {
+      lineWidth: 120
+    }))
   } else {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n")
   }
@@ -54,7 +58,10 @@ export function readPluginsJson() {
 }
 
 export function writePluginsJson(data) {
-  const { $schema, ...rest } = data
+  const {
+    $schema,
+    ...rest
+  } = data
   writeDataToFile(CONFIG_YAML_PATH, rest)
 }
 
@@ -78,7 +85,10 @@ export function writeLockfile(lockfile) {
     for (const key of Object.keys(lockfile.plugins).sort()) {
       sorted[key] = lockfile.plugins[key]
     }
-    lockfile = { ...lockfile, plugins: sorted }
+    lockfile = {
+      ...lockfile,
+      plugins: sorted
+    }
   }
   fs.writeFileSync(LOCKFILE_PATH, JSON.stringify(lockfile, null, 2) + "\n")
 }
@@ -169,38 +179,67 @@ export function parseGitSource(source) {
   if (isLocalSource(url)) {
     const resolved = path.resolve(url)
     const name = typeof source === "object" && source.name ? source.name : path.basename(resolved)
-    return { name, url: resolved, ref: undefined, local: true, subdir }
+    return {
+      name,
+      url: resolved,
+      ref: undefined,
+      local: true,
+      subdir
+    }
   }
   if (url.startsWith("github:")) {
     const [repoPath, ref] = url.replace("github:", "").split("#")
     const [owner, repo] = repoPath.split("/")
     const name = typeof source === "object" && source.name ? source.name : repo
-    return { name, url: `https://github.com/${owner}/${repo}.git`, ref, subdir }
+    return {
+      name,
+      url: `https://github.com/${owner}/${repo}.git`,
+      ref,
+      subdir
+    }
   }
   if (url.startsWith("git+")) {
     const raw = url.replace("git+", "")
     const [parsed, ref] = raw.split("#")
     const name =
       typeof source === "object" && source.name ? source.name : path.basename(parsed, ".git")
-    return { name, url: parsed, ref, subdir }
+    return {
+      name,
+      url: parsed,
+      ref,
+      subdir
+    }
   }
   if (url.startsWith("https://")) {
     const [parsed, ref] = url.split("#")
     const name =
       typeof source === "object" && source.name ? source.name : path.basename(parsed, ".git")
-    return { name, url: parsed, ref, subdir }
+    return {
+      name,
+      url: parsed,
+      ref,
+      subdir
+    }
   }
   // Handle npm scoped packages
   if (typeof url === "string" && url.startsWith("@") && url.includes("/") && !url.includes(":")) {
     const name = typeof source === "object" && source.name ? source.name : url
-    return { name, url: "", npmPackage: true, subdir }
+    return {
+      name,
+      url: "",
+      npmPackage: true,
+      subdir
+    }
   }
   throw new Error(`Cannot parse plugin source: ${formatSource(source)}`)
 }
 
 export function getGitCommit(pluginDir) {
   try {
-    return execSync("git rev-parse HEAD", { cwd: pluginDir, encoding: "utf-8" }).trim()
+    return execSync("git rev-parse HEAD", {
+      cwd: pluginDir,
+      encoding: "utf-8"
+    }).trim()
   } catch {
     return "unknown"
   }
@@ -209,7 +248,10 @@ export function getGitCommit(pluginDir) {
 export function updateGlobalConfig(updates) {
   const json = readPluginsJson()
   if (!json) return false
-  json.configuration = { ...json.configuration, ...updates }
+  json.configuration = {
+    ...json.configuration,
+    ...updates
+  }
   writePluginsJson(json)
   return true
 }
@@ -227,7 +269,9 @@ export function createConfigFromDefault() {
         pageTitle: "Quartz",
         enableSPA: true,
         enablePopovers: true,
-        analytics: { provider: "plausible" },
+        analytics: {
+          provider: "plausible"
+        },
         locale: "en-US",
         baseUrl: "quartz.jzhao.xyz",
         ignorePatterns: ["private", "templates", ".obsidian"],
@@ -265,13 +309,19 @@ export function createConfigFromDefault() {
         },
       },
       plugins: [],
-      layout: { groups: {}, byPageType: {} },
+      layout: {
+        groups: {},
+        byPageType: {}
+      },
     }
     writePluginsJson(minimal)
     return minimal
   }
 
-  const { $schema, ...rest } = defaultData
+  const {
+    $schema,
+    ...rest
+  } = defaultData
   writePluginsJson(rest)
   return rest
 }
@@ -292,7 +342,10 @@ export function createConfigFromTemplate(templateName) {
     return createConfigFromDefault()
   }
 
-  const { $schema, ...rest } = templateData
+  const {
+    $schema,
+    ...rest
+  } = templateData
   writePluginsJson(rest)
   return rest
 }
@@ -369,4 +422,7 @@ export function getNameOverrides(lockfile, pluginsJson) {
 
 export const PLUGINS_JSON_PATH = CONFIG_YAML_PATH
 export const DEFAULT_PLUGINS_JSON_PATH = DEFAULT_CONFIG_YAML_PATH
-export { LOCKFILE_PATH, PLUGINS_DIR }
+export {
+  LOCKFILE_PATH,
+  PLUGINS_DIR
+}

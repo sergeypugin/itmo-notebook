@@ -29,9 +29,9 @@ links:
 	Частичные суммы ограничены сверху $\implies$ ряд сходится.
 ---
 
-- **Случай $l < 0$.**  
-	С некоторого $k_0$: $b_k \frac{a_k}{a_{k+1}} - b_{k+1} < 0 \implies b_{k+1}a_{k+1} > b_k a_k$. 
-	Последовательность возрастает и $b_k a_k \ge b_{k_0} a_{k_0} \implies a_k \ge \frac{\text{const}}{b_k}$. 
+- **Случай $l < 0$.**
+	С некоторого $k_0$: $b_k \frac{a_k}{a_{k+1}} - b_{k+1} < 0 \implies b_{k+1}a_{k+1} > b_k a_k$.
+	Последовательность возрастает и $b_k a_k \ge b_{k_0} a_{k_0} \implies a_k \ge \frac{\text{const}}{b_k}$.
 	Так как $\sum \frac{1}{b_k}$ расходится, по признаку сравнения $\sum a_k$ расходится.
 
 ---
@@ -86,17 +86,17 @@ $$
 
 #### Доказательство:
 
-- **Случай $\lambda \ne 1$.**  
+- **Случай $\lambda \ne 1$.**
 	$\lim \frac{a_k}{a_{k+1}} = \lambda \implies \lim \frac{a_{k+1}}{a_k} = \frac{1}{\lambda}$. По признаку Даламбера сходится при $\frac{1}{\lambda} < 1 \implies \lambda > 1$, расходится при $\lambda < 1$.
 ---
-- **Случай $\lambda = 1, \mu \ne 1$.**  
+- **Случай $\lambda = 1, \mu \ne 1$.**
 	Применяем признак Раабе:
 	$$
 	l = \lim_{k\to\infty} k\left(\frac{a_k}{a_{k+1}} - 1\right) = \lim_{k\to\infty} k\left(1 + \frac{\mu}{k} + \frac{\theta_k}{k^{1+\gamma}} - 1\right) = \mu
 	$$
 	По Раабе сходится при $\mu > 1$, расходится при $\mu < 1$.
 ---
-- **Случай $\lambda = 1, \mu = 1$.**  
+- **Случай $\lambda = 1, \mu = 1$.**
 	Применяем признак Бертрана:
 	$$
 	l = \lim_{k\to\infty} \ln k \cdot \left(k\left(\frac{a_k}{a_{k+1}} - 1\right) - 1\right) = \lim_{k\to\infty} \ln k \cdot \left(k\left(\frac{1}{k} + \frac{\theta_k}{k^{1+\gamma}}\right) - 1\right) =

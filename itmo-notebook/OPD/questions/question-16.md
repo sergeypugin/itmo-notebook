@@ -29,7 +29,7 @@ author: Luisa
 RES:  WORD 0
 
 START: CLA
-WAIT: IN 5       
+WAIT: IN 5
       AND #0x40
       BEQ WAIT
       IN 4

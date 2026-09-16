@@ -75,11 +75,11 @@ $$ \operatorname{Si}(x) = \int_0^x \frac{\sin t}{t} dt, \qquad \operatorname{Ci}
 Эллиптические интегралы возникают при вычислении длины дуги эллипса и в задачах о маятнике. Они делятся на три рода:
 
 - **Первого рода:** $$ F(\varphi, k) = \int_0^{\varphi} \frac{d\theta}{\sqrt{1 - k^2 \sin^2\theta}} $$
-    
+
 - **Второго рода:** $$ E(\varphi, k) = \int_0^{\varphi} \sqrt{1 - k^2 \sin^2\theta} d\theta $$
-    
+
 - **Третьего рода:** $$ \Pi(n, \varphi, k) = \int_0^{\varphi} \frac{d\theta}{(1 - n\sin^2\theta)\sqrt{1 - k^2\sin^2\theta}} $$
-    
+
 
 Здесь $k \in (0,1)$ это эксцентриситет, $n$ — параметр. При $\varphi = \pi/2$ говорят о **полных** эллиптических интегралах $K(k) = F(\pi/2,k)$ и $E(k) = E(\pi/2,k)$.
 

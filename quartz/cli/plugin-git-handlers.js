@@ -1,8 +1,14 @@
 import fs from "fs"
 import path from "path"
 import os from "os"
-import { exec as execCb, execSync } from "child_process"
-import { styleText, promisify } from "util"
+import {
+  exec as execCb,
+  execSync
+} from "child_process"
+import {
+  styleText,
+  promisify
+} from "util"
 import {
   readPluginsJson,
   writePluginsJson,
@@ -20,13 +26,20 @@ import {
   resolveLockfileName,
   getNameOverrides,
 } from "./plugin-data.js"
-import { symlinkOrCopySync } from "./helpers.js"
+import {
+  symlinkOrCopySync
+} from "./helpers.js"
 
 const INTERNAL_EXPORTS = new Set(["manifest", "default"])
 
 const execAsync = promisify(execCb)
 
-async function cloneWithSubdirAsync({ url, ref, subdir, pluginDir }) {
+async function cloneWithSubdirAsync({
+  url,
+  ref,
+  subdir,
+  pluginDir
+}) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "quartz-plugin-"))
   try {
     if (ref) {
@@ -38,11 +51,20 @@ async function cloneWithSubdirAsync({ url, ref, subdir, pluginDir }) {
     if (!fs.existsSync(subdirPath)) {
       throw new Error(`Subdirectory "${subdir}" not found in cloned repository`)
     }
-    fs.cpSync(subdirPath, pluginDir, { recursive: true })
-    const { stdout } = await execAsync("git rev-parse HEAD", { cwd: tmpDir })
+    fs.cpSync(subdirPath, pluginDir, {
+      recursive: true
+    })
+    const {
+      stdout
+    } = await execAsync("git rev-parse HEAD", {
+      cwd: tmpDir
+    })
     return stdout.trim()
   } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true })
+    fs.rmSync(tmpDir, {
+      recursive: true,
+      force: true
+    })
   }
 }
 
@@ -56,12 +78,18 @@ async function buildPluginAsync(pluginDir, name) {
   try {
     const skipBuild = !needsBuild(pluginDir)
     console.log(styleText("cyan", `  → ${name}: installing dependencies...`))
-    await execAsync("npm install --ignore-scripts", { cwd: pluginDir })
+    await execAsync("npm install --ignore-scripts", {
+      cwd: pluginDir
+    })
     if (!skipBuild) {
       console.log(styleText("cyan", `  → ${name}: building...`))
-      await execAsync("npm run build", { cwd: pluginDir })
+      await execAsync("npm run build", {
+        cwd: pluginDir
+      })
     }
-    await execAsync("npm prune --omit=dev", { cwd: pluginDir })
+    await execAsync("npm prune --omit=dev", {
+      cwd: pluginDir
+    })
     linkPeerPlugins(pluginDir)
     return true
   } catch (error) {
@@ -88,7 +116,9 @@ async function runParallel(items, concurrency, fn) {
     }
   }
 
-  const workers = Array.from({ length: Math.min(concurrency, items.length) }, () => worker())
+  const workers = Array.from({
+    length: Math.min(concurrency, items.length)
+  }, () => worker())
   await Promise.all(workers)
   return results
 }
@@ -151,7 +181,9 @@ function linkPeerPlugins(pluginDir) {
       if (!siblingPlugin) continue
 
       const scopeDir = path.join(pluginDir, "node_modules", peerName.split("/")[0])
-      fs.mkdirSync(scopeDir, { recursive: true })
+      fs.mkdirSync(scopeDir, {
+        recursive: true
+      })
 
       const target = path.relative(scopeDir, siblingPlugin)
       trySymlink(target, peerNodeModulesPath)
@@ -164,9 +196,13 @@ function linkPeerPlugins(pluginDir) {
     const parts = peerName.split("/")
     if (parts.length > 1) {
       const scopeDir = path.join(pluginDir, "node_modules", parts[0])
-      fs.mkdirSync(scopeDir, { recursive: true })
+      fs.mkdirSync(scopeDir, {
+        recursive: true
+      })
     } else {
-      fs.mkdirSync(path.join(pluginDir, "node_modules"), { recursive: true })
+      fs.mkdirSync(path.join(pluginDir, "node_modules"), {
+        recursive: true
+      })
     }
 
     const target = path.relative(path.dirname(peerNodeModulesPath), hostPeerPath)
@@ -269,7 +305,11 @@ async function regeneratePluginIndex() {
     const passthrough = named.filter((n) => !isOverridableExport(n, dtsContent))
 
     if (overridable.length > 0 || passthrough.length > 0 || types.length > 0) {
-      pluginExports.set(pluginName, { overridable, passthrough, types })
+      pluginExports.set(pluginName, {
+        overridable,
+        passthrough,
+        types
+      })
       for (const n of [...overridable, ...passthrough]) {
         nameCount.set(n, (nameCount.get(n) ?? 0) + 1)
       }
@@ -283,14 +323,18 @@ async function regeneratePluginIndex() {
   lines.push("")
 
   // Type re-exports
-  for (const [pluginName, { types }] of pluginExports) {
+  for (const [pluginName, {
+      types
+    }] of pluginExports) {
     if (types.length > 0) {
       lines.push(`export type { ${types.join(", ")} } from "./${pluginName}"`)
     }
   }
 
   // Direct re-exports for non-overridable values (constants, utility functions, etc.)
-  for (const [pluginName, { passthrough }] of pluginExports) {
+  for (const [pluginName, {
+      passthrough
+    }] of pluginExports) {
     if (passthrough.length === 0) continue
     const unique = passthrough.filter((n) => (nameCount.get(n) ?? 0) === 1)
     if (unique.length > 0) {
@@ -303,7 +347,9 @@ async function regeneratePluginIndex() {
   lines.push(
     `export const plugins: Record<string, Record<string, (...args: unknown[]) => void>> = {`,
   )
-  for (const [pluginName, { overridable }] of pluginExports) {
+  for (const [pluginName, {
+      overridable
+    }] of pluginExports) {
     if (overridable.length === 0) continue
     const escapedName = pluginName.replace(/"/g, '\\"')
     lines.push(`  "${escapedName}": {`)
@@ -318,7 +364,9 @@ async function regeneratePluginIndex() {
   lines.push("")
 
   // Top-level exports for overridable names: alias to the plugins map wrapper
-  for (const [pluginName, { overridable }] of pluginExports) {
+  for (const [pluginName, {
+      overridable
+    }] of pluginExports) {
     if (overridable.length === 0) continue
 
     const unique = overridable.filter((n) => (nameCount.get(n) ?? 0) === 1)
@@ -373,11 +421,14 @@ export async function handlePluginInstallUnified({
     return
   }
 
-  const resolvedNames = names
-    ? names.map((name) =>
-        resolveLockfileName(name, lockfile ?? { version: "1.0.0", plugins: {} }, pluginsJson),
-      )
-    : null
+  const resolvedNames = names ?
+    names.map((name) =>
+      resolveLockfileName(name, lockfile ?? {
+        version: "1.0.0",
+        plugins: {}
+      }, pluginsJson),
+    ) :
+    null
   const nameFilter = resolvedNames ? new Set(resolvedNames) : null
 
   if (dryRun && latest) {
@@ -400,7 +451,9 @@ export async function handlePluginInstallUnified({
     const nameWidth = Math.max(6, ...rows.map((row) => row.displayName.length)) + 2
     const header = `${"Plugin".padEnd(nameWidth)}${"Installed".padEnd(12)}${"Latest".padEnd(12)}Status`
 
-    const renderRow = ({ displayName }, installed, latest, statusLabel) =>
+    const renderRow = ({
+        displayName
+      }, installed, latest, statusLabel) =>
       `${displayName.padEnd(nameWidth)}${installed.padEnd(12)}${latest.padEnd(12)}${statusLabel}`
 
     const updateRow = (index, installed, latest, statusLabel) => {
@@ -436,14 +489,16 @@ export async function handlePluginInstallUnified({
 
       const lsRemoteRef = row.entry.ref ? `refs/heads/${row.entry.ref}` : "HEAD"
       return execAsync(`git ls-remote "${row.entry.resolved}" ${lsRemoteRef}`)
-        .then(({ stdout }) => {
+        .then(({
+          stdout
+        }) => {
           const latestCommit = stdout.split("\t")[0].trim()
           const isCurrent = latestCommit === row.entry.commit
           const installed = row.entry.commit.slice(0, 7)
           const latest = latestCommit.slice(0, 7)
-          const statusLabel = isCurrent
-            ? styleText("green", "up to date")
-            : styleText("yellow", "update available")
+          const statusLabel = isCurrent ?
+            styleText("green", "up to date") :
+            styleText("yellow", "update available")
           updateRow(index, installed, latest, statusLabel)
           return {
             index,
@@ -472,13 +527,19 @@ export async function handlePluginInstallUnified({
       console.log(styleText("bold", "Checking for plugin updates...\n"))
       console.log(styleText("bold", header))
       console.log("─".repeat(header.length))
-      for (const { index, installed, latest, status } of results) {
+      for (const {
+          index,
+          installed,
+          latest,
+          status
+        }
+        of results) {
         const color =
-          status === "up to date" || status === "local"
-            ? "green"
-            : status === "check failed"
-              ? "red"
-              : "yellow"
+          status === "up to date" || status === "local" ?
+          "green" :
+          status === "check failed" ?
+          "red" :
+          "yellow"
         console.log(renderRow(rows[index], installed, latest, styleText(color, status)))
       }
     }
@@ -492,11 +553,16 @@ export async function handlePluginInstallUnified({
     }
 
     if (!lockfile) {
-      lockfile = { version: "1.0.0", plugins: {} }
+      lockfile = {
+        version: "1.0.0",
+        plugins: {}
+      }
     }
 
     if (!fs.existsSync(PLUGINS_DIR)) {
-      fs.mkdirSync(PLUGINS_DIR, { recursive: true })
+      fs.mkdirSync(PLUGINS_DIR, {
+        recursive: true
+      })
     }
 
     const configNames = new Set(pluginsJson.plugins.map((entry) => extractPluginName(entry.source)))
@@ -573,7 +639,13 @@ export async function handlePluginInstallUnified({
     const remoteEntries = []
     for (const entry of missing) {
       try {
-        const { name, url, ref, local, subdir } = parseGitSource(entry.source)
+        const {
+          name,
+          url,
+          ref,
+          local,
+          subdir
+        } = parseGitSource(entry.source)
         const pluginDir = path.join(PLUGINS_DIR, name)
 
         if (fs.existsSync(pluginDir)) {
@@ -585,10 +657,15 @@ export async function handlePluginInstallUnified({
               source: entry.source,
               resolved: url,
               commit: "local",
-              ...(subdir && { subdir }),
+              ...(subdir && {
+                subdir
+              }),
               installedAt: new Date().toISOString(),
             }
-            installed.push({ name, pluginDir })
+            installed.push({
+              name,
+              pluginDir
+            })
             lockfileChanged = true
             continue
           }
@@ -598,11 +675,18 @@ export async function handlePluginInstallUnified({
             source: entry.source,
             resolved: url,
             commit,
-            ...(ref && { ref }),
-            ...(subdir && { subdir }),
+            ...(ref && {
+              ref
+            }),
+            ...(subdir && {
+              subdir
+            }),
             installedAt: new Date().toISOString(),
           }
-          installed.push({ name, pluginDir })
+          installed.push({
+            name,
+            pluginDir
+          })
           lockfileChanged = true
           continue
         }
@@ -616,20 +700,34 @@ export async function handlePluginInstallUnified({
             continue
           }
           console.log(styleText("cyan", `→ Linking ${name} from ${resolvedPath}...`))
-          fs.mkdirSync(path.dirname(pluginDir), { recursive: true })
+          fs.mkdirSync(path.dirname(pluginDir), {
+            recursive: true
+          })
           symlinkOrCopySync(resolvedPath, pluginDir)
           lockfile.plugins[name] = {
             source: entry.source,
             resolved: resolvedPath,
             commit: "local",
-            ...(subdir && { subdir }),
+            ...(subdir && {
+              subdir
+            }),
             installedAt: new Date().toISOString(),
           }
-          installed.push({ name, pluginDir })
+          installed.push({
+            name,
+            pluginDir
+          })
           lockfileChanged = true
           console.log(styleText("green", `✓ Linked ${name} (local)`))
         } else {
-          remoteEntries.push({ entry, name, url, ref, subdir, pluginDir })
+          remoteEntries.push({
+            entry,
+            name,
+            url,
+            ref,
+            subdir,
+            pluginDir
+          })
         }
       } catch (error) {
         console.log(styleText("red", `✗ Failed to resolve ${formatSource(entry.source)}: ${error}`))
@@ -643,21 +741,40 @@ export async function handlePluginInstallUnified({
       await runParallel(
         remoteEntries,
         concurrency,
-        async ({ entry, name, url, ref, subdir, pluginDir }) => {
+        async ({
+          entry,
+          name,
+          url,
+          ref,
+          subdir,
+          pluginDir
+        }) => {
           try {
             if (subdir) {
               console.log(styleText("cyan", `→ Cloning ${name} from ${url} (subdir: ${subdir})...`))
-              fs.mkdirSync(path.dirname(pluginDir), { recursive: true })
-              const commit = await cloneWithSubdirAsync({ url, ref, subdir, pluginDir })
+              fs.mkdirSync(path.dirname(pluginDir), {
+                recursive: true
+              })
+              const commit = await cloneWithSubdirAsync({
+                url,
+                ref,
+                subdir,
+                pluginDir
+              })
               lockfile.plugins[name] = {
                 source: entry.source,
                 resolved: url,
                 commit,
-                ...(ref && { ref }),
+                ...(ref && {
+                  ref
+                }),
                 subdir,
                 installedAt: new Date().toISOString(),
               }
-              installed.push({ name, pluginDir })
+              installed.push({
+                name,
+                pluginDir
+              })
               lockfileChanged = true
               console.log(
                 styleText("green", `✓ Cloned ${name}@${commit.slice(0, 7)} (subdir: ${subdir})`),
@@ -668,17 +785,26 @@ export async function handlePluginInstallUnified({
               const branchArg = ref ? ` --branch ${ref}` : ""
               await execAsync(`git clone --depth 1${branchArg} "${url}" "${pluginDir}"`)
 
-              const { stdout } = await execAsync("git rev-parse HEAD", { cwd: pluginDir })
+              const {
+                stdout
+              } = await execAsync("git rev-parse HEAD", {
+                cwd: pluginDir
+              })
               const commit = stdout.trim()
               lockfile.plugins[name] = {
                 source: entry.source,
                 resolved: url,
                 commit,
-                ...(ref && { ref }),
+                ...(ref && {
+                  ref
+                }),
                 installedAt: new Date().toISOString(),
               }
 
-              installed.push({ name, pluginDir })
+              installed.push({
+                name,
+                pluginDir
+              })
               lockfileChanged = true
               console.log(styleText("green", `✓ Cloned ${name}@${commit.slice(0, 7)}`))
             }
@@ -696,7 +822,10 @@ export async function handlePluginInstallUnified({
       console.log()
       console.log(styleText("cyan", "→ Building plugins..."))
       const concurrency = resolvedConcurrency
-      const results = await runParallel(installed, concurrency, async ({ name, pluginDir }) => {
+      const results = await runParallel(installed, concurrency, async ({
+        name,
+        pluginDir
+      }) => {
         const ok = await buildPluginAsync(pluginDir, name)
         if (ok) console.log(styleText("green", `  ✓ ${name} built`))
         return ok
@@ -723,7 +852,9 @@ export async function handlePluginInstallUnified({
         }
         const pluginDir = path.join(PLUGINS_DIR, name)
         if (fs.existsSync(pluginDir)) {
-          fs.rmSync(pluginDir, { recursive: true })
+          fs.rmSync(pluginDir, {
+            recursive: true
+          })
         }
         delete lockfile.plugins[name]
         lockfileChanged = true
@@ -777,7 +908,9 @@ export async function handlePluginInstallUnified({
     console.log()
 
     if (!fs.existsSync(PLUGINS_DIR)) {
-      fs.mkdirSync(PLUGINS_DIR, { recursive: true })
+      fs.mkdirSync(PLUGINS_DIR, {
+        recursive: true
+      })
     }
 
     let installed = 0
@@ -805,10 +938,15 @@ export async function handlePluginInstallUnified({
             failed++
             continue
           }
-          fs.mkdirSync(path.dirname(pluginDir), { recursive: true })
+          fs.mkdirSync(path.dirname(pluginDir), {
+            recursive: true
+          })
           symlinkOrCopySync(entry.resolved, pluginDir)
           console.log(styleText("green", `✓ ${name} restored (local symlink)`))
-          restoredPlugins.push({ name, pluginDir })
+          restoredPlugins.push({
+            name,
+            pluginDir
+          })
           installed++
         } catch {
           console.log(styleText("red", `✗ ${name}: failed to restore local symlink`))
@@ -817,13 +955,21 @@ export async function handlePluginInstallUnified({
         continue
       }
 
-      remotePlugins.push({ name, entry, pluginDir })
+      remotePlugins.push({
+        name,
+        entry,
+        pluginDir
+      })
     }
 
     // Clone remote plugins in parallel
     if (remotePlugins.length > 0) {
       const concurrency = resolvedConcurrency
-      await runParallel(remotePlugins, concurrency, async ({ name, entry, pluginDir }) => {
+      await runParallel(remotePlugins, concurrency, async ({
+        name,
+        entry,
+        pluginDir
+      }) => {
         try {
           if (entry.subdir) {
             console.log(
@@ -832,7 +978,9 @@ export async function handlePluginInstallUnified({
                 `→ ${name}: cloning ${entry.resolved}@${entry.commit.slice(0, 7)} (subdir: ${entry.subdir})...`,
               ),
             )
-            fs.mkdirSync(path.dirname(pluginDir), { recursive: true })
+            fs.mkdirSync(path.dirname(pluginDir), {
+              recursive: true
+            })
             await cloneWithSubdirAsync({
               url: entry.resolved,
               ref: entry.ref,
@@ -848,10 +996,15 @@ export async function handlePluginInstallUnified({
             )
             const branchArg = entry.ref ? ` --branch ${entry.ref}` : ""
             await execAsync(`git clone --depth 1${branchArg} "${entry.resolved}" "${pluginDir}"`)
-            await execAsync(`git checkout ${entry.commit}`, { cwd: pluginDir })
+            await execAsync(`git checkout ${entry.commit}`, {
+              cwd: pluginDir
+            })
           }
           console.log(styleText("green", `✓ ${name} restored`))
-          restoredPlugins.push({ name, pluginDir })
+          restoredPlugins.push({
+            name,
+            pluginDir
+          })
           installed++
         } catch {
           console.log(styleText("red", `✗ ${name}: failed to restore`))
@@ -867,7 +1020,10 @@ export async function handlePluginInstallUnified({
       const results = await runParallel(
         restoredPlugins,
         concurrency,
-        async ({ name, pluginDir }) => {
+        async ({
+          name,
+          pluginDir
+        }) => {
           const ok = await buildPluginAsync(pluginDir, name)
           if (ok) console.log(styleText("green", `  ✓ ${name} built`))
           return ok
@@ -915,23 +1071,38 @@ export async function handlePluginInstallUnified({
 
       if (entry.commit === "local") {
         console.log(styleText("cyan", `→ Rebuilding local plugin ${name}...`))
-        updatedPlugins.push({ name, pluginDir })
+        updatedPlugins.push({
+          name,
+          pluginDir
+        })
         continue
       }
 
-      validPlugins.push({ name, pluginDir, entry })
+      validPlugins.push({
+        name,
+        pluginDir,
+        entry
+      })
     }
 
     // Phase 2: Fetch/update plugins in parallel
     if (validPlugins.length > 0) {
       const concurrency = resolvedConcurrency
-      await runParallel(validPlugins, concurrency, async ({ name, pluginDir, entry }) => {
+      await runParallel(validPlugins, concurrency, async ({
+        name,
+        pluginDir,
+        entry
+      }) => {
         try {
           console.log(styleText("cyan", `→ Updating ${name}...`))
 
           if (entry.subdir) {
-            fs.rmSync(pluginDir, { recursive: true })
-            fs.mkdirSync(path.dirname(pluginDir), { recursive: true })
+            fs.rmSync(pluginDir, {
+              recursive: true
+            })
+            fs.mkdirSync(path.dirname(pluginDir), {
+              recursive: true
+            })
             const newCommit = await cloneWithSubdirAsync({
               url: entry.resolved,
               ref: entry.ref,
@@ -939,7 +1110,10 @@ export async function handlePluginInstallUnified({
               pluginDir,
             })
             if (needsBuild(pluginDir)) {
-              updatedPlugins.push({ name, pluginDir })
+              updatedPlugins.push({
+                name,
+                pluginDir
+              })
             }
             if (newCommit !== entry.commit) {
               entry.commit = newCommit
@@ -960,14 +1134,23 @@ export async function handlePluginInstallUnified({
             await execAsync(`git fetch --depth 1 origin${fetchRef ? " " + fetchRef : ""}`, {
               cwd: pluginDir,
             })
-            await execAsync(`git reset --hard ${resetTarget}`, { cwd: pluginDir })
+            await execAsync(`git reset --hard ${resetTarget}`, {
+              cwd: pluginDir
+            })
 
-            const { stdout } = await execAsync("git rev-parse HEAD", { cwd: pluginDir })
+            const {
+              stdout
+            } = await execAsync("git rev-parse HEAD", {
+              cwd: pluginDir
+            })
             const newCommit = stdout.trim()
             if (newCommit !== entry.commit) {
               entry.commit = newCommit
               entry.installedAt = new Date().toISOString()
-              updatedPlugins.push({ name, pluginDir })
+              updatedPlugins.push({
+                name,
+                pluginDir
+              })
               lockfileChanged = true
               console.log(styleText("green", `✓ Updated ${name} to ${newCommit.slice(0, 7)}`))
             } else {
@@ -985,7 +1168,10 @@ export async function handlePluginInstallUnified({
       console.log()
       console.log(styleText("cyan", "→ Rebuilding updated plugins..."))
       const concurrency = resolvedConcurrency
-      await runParallel(updatedPlugins, concurrency, async ({ name, pluginDir }) => {
+      await runParallel(updatedPlugins, concurrency, async ({
+        name,
+        pluginDir
+      }) => {
         const ok = await buildPluginAsync(pluginDir, name)
         if (ok) console.log(styleText("green", `  ✓ ${name} rebuilt`))
         return ok
@@ -1002,7 +1188,9 @@ export async function handlePluginInstallUnified({
   }
 
   if (!fs.existsSync(PLUGINS_DIR)) {
-    fs.mkdirSync(PLUGINS_DIR, { recursive: true })
+    fs.mkdirSync(PLUGINS_DIR, {
+      recursive: true
+    })
   }
 
   const entries = Object.entries(lockfile.plugins).filter(([name]) =>
@@ -1033,17 +1221,24 @@ export async function handlePluginInstallUnified({
             continue
           }
           if (stat.isSymbolicLink()) fs.unlinkSync(pluginDir)
-          else fs.rmSync(pluginDir, { recursive: true })
+          else fs.rmSync(pluginDir, {
+            recursive: true
+          })
         }
         if (!fs.existsSync(entry.resolved)) {
           console.log(styleText("red", `  ✗ ${name}: local path missing: ${entry.resolved}`))
           failed++
           continue
         }
-        fs.mkdirSync(path.dirname(pluginDir), { recursive: true })
+        fs.mkdirSync(path.dirname(pluginDir), {
+          recursive: true
+        })
         symlinkOrCopySync(entry.resolved, pluginDir)
         console.log(styleText("green", `  ✓ ${name} (local) linked`))
-        pluginsToBuild.push({ name, pluginDir })
+        pluginsToBuild.push({
+          name,
+          pluginDir
+        })
         installed++
       } catch {
         console.log(styleText("red", `  ✗ ${name}: failed to link local path`))
@@ -1061,7 +1256,10 @@ export async function handlePluginInstallUnified({
           installed++
           continue
         }
-        pluginsToBuild.push({ name, pluginDir })
+        pluginsToBuild.push({
+          name,
+          pluginDir
+        })
         installed++
       } else {
         const currentCommit = getGitCommit(pluginDir)
@@ -1073,33 +1271,60 @@ export async function handlePluginInstallUnified({
           continue
         }
         if (currentCommit !== entry.commit) {
-          gitEntries.push({ name, entry, pluginDir, action: "update" })
+          gitEntries.push({
+            name,
+            entry,
+            pluginDir,
+            action: "update"
+          })
         } else {
-          pluginsToBuild.push({ name, pluginDir })
+          pluginsToBuild.push({
+            name,
+            pluginDir
+          })
           installed++
         }
       }
     } else {
-      gitEntries.push({ name, entry, pluginDir, action: "clone" })
+      gitEntries.push({
+        name,
+        entry,
+        pluginDir,
+        action: "clone"
+      })
     }
   }
 
   // Run git fetch/clone operations in parallel
   if (gitEntries.length > 0) {
     const concurrency = resolvedConcurrency
-    await runParallel(gitEntries, concurrency, async ({ name, entry, pluginDir, action }) => {
+    await runParallel(gitEntries, concurrency, async ({
+      name,
+      entry,
+      pluginDir,
+      action
+    }) => {
       try {
         if (action === "update") {
           console.log(styleText("cyan", `  → ${name}: updating to ${entry.commit.slice(0, 7)}...`))
           const fetchRef = entry.ref ? ` ${entry.ref}` : ""
-          await execAsync(`git fetch --depth 1 origin${fetchRef}`, { cwd: pluginDir })
-          await execAsync(`git reset --hard ${entry.commit}`, { cwd: pluginDir })
-          pluginsToBuild.push({ name, pluginDir })
+          await execAsync(`git fetch --depth 1 origin${fetchRef}`, {
+            cwd: pluginDir
+          })
+          await execAsync(`git reset --hard ${entry.commit}`, {
+            cwd: pluginDir
+          })
+          pluginsToBuild.push({
+            name,
+            pluginDir
+          })
           installed++
         } else {
           if (entry.subdir) {
             console.log(styleText("cyan", `  → ${name}: cloning (subdir: ${entry.subdir})...`))
-            fs.mkdirSync(path.dirname(pluginDir), { recursive: true })
+            fs.mkdirSync(path.dirname(pluginDir), {
+              recursive: true
+            })
             await cloneWithSubdirAsync({
               url: entry.resolved,
               ref: entry.ref,
@@ -1111,12 +1336,19 @@ export async function handlePluginInstallUnified({
             const branchArg = entry.ref ? ` --branch ${entry.ref}` : ""
             await execAsync(`git clone --depth 1${branchArg} "${entry.resolved}" "${pluginDir}"`)
             if (entry.commit !== "unknown") {
-              await execAsync(`git fetch --depth 1 origin ${entry.commit}`, { cwd: pluginDir })
-              await execAsync(`git checkout ${entry.commit}`, { cwd: pluginDir })
+              await execAsync(`git fetch --depth 1 origin ${entry.commit}`, {
+                cwd: pluginDir
+              })
+              await execAsync(`git checkout ${entry.commit}`, {
+                cwd: pluginDir
+              })
             }
           }
           console.log(styleText("green", `  ✓ ${name}@${entry.commit.slice(0, 7)}`))
-          pluginsToBuild.push({ name, pluginDir })
+          pluginsToBuild.push({
+            name,
+            pluginDir
+          })
           installed++
         }
       } catch {
@@ -1132,7 +1364,10 @@ export async function handlePluginInstallUnified({
     console.log()
     console.log(styleText("cyan", "→ Building plugins..."))
     const concurrency = resolvedConcurrency
-    const results = await runParallel(pluginsToBuild, concurrency, async ({ name, pluginDir }) => {
+    const results = await runParallel(pluginsToBuild, concurrency, async ({
+      name,
+      pluginDir
+    }) => {
       const ok = await buildPluginAsync(pluginDir, name)
       if (ok) console.log(styleText("green", `  ✓ ${name} built`))
       return ok
@@ -1160,8 +1395,11 @@ export async function handlePluginInstall() {
 }
 
 export async function handlePluginAdd(
-  sources,
-  { name: nameOverride, subdir: subdirOverride, concurrency: concurrencyOption } = {},
+  sources, {
+    name: nameOverride,
+    subdir: subdirOverride,
+    concurrency: concurrencyOption
+  } = {},
 ) {
   if (nameOverride && sources.length > 1) {
     console.log(styleText("red", "✗ --name/--as can only be used when adding a single plugin"))
@@ -1176,11 +1414,16 @@ export async function handlePluginAdd(
 
   let lockfile = readLockfile()
   if (!lockfile) {
-    lockfile = { version: "1.0.0", plugins: {} }
+    lockfile = {
+      version: "1.0.0",
+      plugins: {}
+    }
   }
 
   if (!fs.existsSync(PLUGINS_DIR)) {
-    fs.mkdirSync(PLUGINS_DIR, { recursive: true })
+    fs.mkdirSync(PLUGINS_DIR, {
+      recursive: true
+    })
   }
 
   const addedPlugins = []
@@ -1193,10 +1436,21 @@ export async function handlePluginAdd(
       if (parsed.npmPackage) {
         const name = nameOverride ?? parsed.name
         console.log(styleText("cyan", `→ Installing ${name} from npm...`))
-        execSync(`npm install ${parsed.name}`, { cwd: process.cwd(), stdio: "inherit" })
-        const configSource = nameOverride ? { repo: parsed.name, name: nameOverride } : parsed.name
+        execSync(`npm install ${parsed.name}`, {
+          cwd: process.cwd(),
+          stdio: "inherit"
+        })
+        const configSource = nameOverride ? {
+          repo: parsed.name,
+          name: nameOverride
+        } : parsed.name
         const pluginDir = path.join(process.cwd(), "node_modules", ...parsed.name.split("/"))
-        addedPlugins.push({ name, pluginDir, source: parsed.name, configSource })
+        addedPlugins.push({
+          name,
+          pluginDir,
+          source: parsed.name,
+          configSource
+        })
         continue
       }
       const name = nameOverride ?? parsed.name
@@ -1208,7 +1462,9 @@ export async function handlePluginAdd(
 
       let configSource = undefined
       if (nameOverride || subdirOverride) {
-        configSource = { repo: source }
+        configSource = {
+          repo: source
+        }
         if (nameOverride) configSource.name = nameOverride
         if (subdirOverride) configSource.subdir = subdirOverride
       }
@@ -1226,19 +1482,36 @@ export async function handlePluginAdd(
           continue
         }
         console.log(styleText("cyan", `→ Adding ${name} from local path ${resolvedPath}...`))
-        fs.mkdirSync(path.dirname(pluginDir), { recursive: true })
+        fs.mkdirSync(path.dirname(pluginDir), {
+          recursive: true
+        })
         symlinkOrCopySync(resolvedPath, pluginDir)
         lockfile.plugins[name] = {
           source,
           resolved: resolvedPath,
           commit: "local",
-          ...(subdir && { subdir }),
+          ...(subdir && {
+            subdir
+          }),
           installedAt: new Date().toISOString(),
         }
-        addedPlugins.push({ name, pluginDir, source, configSource })
+        addedPlugins.push({
+          name,
+          pluginDir,
+          source,
+          configSource
+        })
         console.log(styleText("green", `✓ Added ${name} (local symlink)`))
       } else {
-        remoteSources.push({ source, name, url, ref, subdir, pluginDir, configSource })
+        remoteSources.push({
+          source,
+          name,
+          url,
+          ref,
+          subdir,
+          pluginDir,
+          configSource
+        })
       }
     } catch (error) {
       console.log(styleText("red", `✗ Failed to add ${formatSource(source)}: ${error}`))
@@ -1251,21 +1524,43 @@ export async function handlePluginAdd(
     await runParallel(
       remoteSources,
       concurrency,
-      async ({ source, name, url, ref, subdir, pluginDir, configSource }) => {
+      async ({
+        source,
+        name,
+        url,
+        ref,
+        subdir,
+        pluginDir,
+        configSource
+      }) => {
         try {
           if (subdir) {
             console.log(styleText("cyan", `→ Adding ${name} from ${url} (subdir: ${subdir})...`))
-            fs.mkdirSync(path.dirname(pluginDir), { recursive: true })
-            const commit = await cloneWithSubdirAsync({ url, ref, subdir, pluginDir })
+            fs.mkdirSync(path.dirname(pluginDir), {
+              recursive: true
+            })
+            const commit = await cloneWithSubdirAsync({
+              url,
+              ref,
+              subdir,
+              pluginDir
+            })
             lockfile.plugins[name] = {
               source,
               resolved: url,
               commit,
-              ...(ref && { ref }),
+              ...(ref && {
+                ref
+              }),
               subdir,
               installedAt: new Date().toISOString(),
             }
-            addedPlugins.push({ name, pluginDir, source, configSource })
+            addedPlugins.push({
+              name,
+              pluginDir,
+              source,
+              configSource
+            })
             console.log(
               styleText("green", `✓ Added ${name}@${commit.slice(0, 7)} (subdir: ${subdir})`),
             )
@@ -1275,17 +1570,28 @@ export async function handlePluginAdd(
             const branchArg = ref ? ` --branch ${ref}` : ""
             await execAsync(`git clone --depth 1${branchArg} "${url}" "${pluginDir}"`)
 
-            const { stdout } = await execAsync("git rev-parse HEAD", { cwd: pluginDir })
+            const {
+              stdout
+            } = await execAsync("git rev-parse HEAD", {
+              cwd: pluginDir
+            })
             const commit = stdout.trim()
             lockfile.plugins[name] = {
               source,
               resolved: url,
               commit,
-              ...(ref && { ref }),
+              ...(ref && {
+                ref
+              }),
               installedAt: new Date().toISOString(),
             }
 
-            addedPlugins.push({ name, pluginDir, source, configSource })
+            addedPlugins.push({
+              name,
+              pluginDir,
+              source,
+              configSource
+            })
             console.log(styleText("green", `✓ Added ${name}@${commit.slice(0, 7)}`))
           }
         } catch (error) {
@@ -1299,7 +1605,10 @@ export async function handlePluginAdd(
     console.log()
     console.log(styleText("cyan", "→ Building plugins..."))
     const concurrency = resolvedConcurrency
-    await runParallel(addedPlugins, concurrency, async ({ name, pluginDir }) => {
+    await runParallel(addedPlugins, concurrency, async ({
+      name,
+      pluginDir
+    }) => {
       const ok = await buildPluginAsync(pluginDir, name)
       if (ok) console.log(styleText("green", `  ✓ ${name} built`))
       return ok
@@ -1310,7 +1619,12 @@ export async function handlePluginAdd(
   writeLockfile(lockfile)
   const pluginsJson = readPluginsJson()
   if (pluginsJson?.plugins) {
-    for (const { pluginDir, source, configSource } of addedPlugins) {
+    for (const {
+        pluginDir,
+        source,
+        configSource
+      }
+      of addedPlugins) {
       const manifest = readManifestFromPackageJson(pluginDir)
       const newEntry = {
         source: configSource ?? source,
@@ -1363,7 +1677,9 @@ export async function handlePluginRemove(names) {
     console.log(styleText("cyan", `→ Removing ${displayName}...`))
 
     if (fs.existsSync(pluginDir)) {
-      fs.rmSync(pluginDir, { recursive: true })
+      fs.rmSync(pluginDir, {
+        recursive: true
+      })
     }
 
     delete lockfile.plugins[lockKey]
@@ -1379,9 +1695,9 @@ export async function handlePluginRemove(names) {
   if (pluginsJson?.plugins) {
     pluginsJson.plugins = pluginsJson.plugins.filter(
       (plugin) =>
-        !names.includes(extractPluginName(plugin.source)) &&
-        !names.includes(formatSource(plugin.source)) &&
-        !resolvedNames.includes(extractPluginName(plugin.source)),
+      !names.includes(extractPluginName(plugin.source)) &&
+      !names.includes(formatSource(plugin.source)) &&
+      !resolvedNames.includes(extractPluginName(plugin.source)),
     )
     writePluginsJson(pluginsJson)
   }
@@ -1496,11 +1812,17 @@ export async function handlePluginConfig(name, options = {}) {
 }
 
 export async function handlePluginCheck() {
-  return handlePluginInstallUnified({ latest: true, dryRun: true })
+  return handlePluginInstallUnified({
+    latest: true,
+    dryRun: true
+  })
 }
 
 export async function handlePluginUpdate(names) {
-  return handlePluginInstallUnified({ names, latest: true })
+  return handlePluginInstallUnified({
+    names,
+    latest: true
+  })
 }
 
 export async function handlePluginList() {
@@ -1520,9 +1842,9 @@ export async function handlePluginList() {
     const pluginDir = path.join(PLUGINS_DIR, name)
     const exists = fs.existsSync(pluginDir)
     const overriddenName = nameOverrides.get(name)
-    const displayLabel = overriddenName
-      ? `${overriddenName} ${styleText("gray", `(dir: ${name})`)}`
-      : name
+    const displayLabel = overriddenName ?
+      `${overriddenName} ${styleText("gray", `(dir: ${name})`)}` :
+      name
 
     if (entry.commit === "local") {
       const isLinked = exists && fs.lstatSync(pluginDir).isSymbolicLink()
@@ -1542,11 +1864,11 @@ export async function handlePluginList() {
       currentCommit = getGitCommit(pluginDir)
     }
 
-    const status = exists
-      ? currentCommit === entry.commit
-        ? styleText("green", "✓")
-        : styleText("yellow", "⚡")
-      : styleText("red", "✗")
+    const status = exists ?
+      currentCommit === entry.commit ?
+      styleText("green", "✓") :
+      styleText("yellow", "⚡") :
+      styleText("red", "✗")
 
     console.log(`  ${status} ${styleText("bold", displayLabel)}`)
     console.log(`    Source: ${formatSource(entry.source)}`)
@@ -1582,7 +1904,15 @@ export async function handlePluginStatus() {
     const sourceLabel = formatSource(entry.source)
     const commitLabel = entry.commit === "local" ? "local" : `@${entry.commit.slice(0, 7)}`
     const enabled = enabledByName.get(name) ?? false
-    return { name, entry, exists, displayName, sourceLabel, commitLabel, enabled }
+    return {
+      name,
+      entry,
+      exists,
+      displayName,
+      sourceLabel,
+      commitLabel,
+      enabled
+    }
   })
 
   const nameWidth = Math.max(8, ...rows.map((row) => row.displayName.length)) + 2
@@ -1601,9 +1931,9 @@ export async function handlePluginStatus() {
   const formatRow = (row, updateLabel, updateText) => {
     const statusIcon = row.exists ? styleText("green", "✓") : styleText("red", "✗")
     const enabledText = row.enabled ? "enabled" : "disabled"
-    const enabledLabel = row.enabled
-      ? styleText("green", enabledText)
-      : styleText("gray", enabledText)
+    const enabledLabel = row.enabled ?
+      styleText("green", enabledText) :
+      styleText("gray", enabledText)
     const enabledColumn = `${enabledLabel}${" ".repeat(enabledWidth - enabledText.length)}`
     const updateColumn = `${updateLabel}${" ".repeat(Math.max(0, updateWidth - updateText.length))}`
     return `  ${statusIcon} ${row.displayName.padEnd(nameWidth)}${row.sourceLabel.padEnd(
@@ -1614,15 +1944,25 @@ export async function handlePluginStatus() {
   const updateDisplay = (status) => {
     switch (status) {
       case "local":
-        return { text: "— local", label: styleText("gray", "— local") }
+        return {
+          text: "— local", label: styleText("gray", "— local")
+        }
       case "up_to_date":
-        return { text: "✓ up to date", label: styleText("green", "✓ up to date") }
+        return {
+          text: "✓ up to date", label: styleText("green", "✓ up to date")
+        }
       case "update_available":
-        return { text: "↑ update available", label: styleText("yellow", "↑ update available") }
+        return {
+          text: "↑ update available", label: styleText("yellow", "↑ update available")
+        }
       case "failed":
-        return { text: "✗ check failed", label: styleText("red", "✗ check failed") }
+        return {
+          text: "✗ check failed", label: styleText("red", "✗ check failed")
+        }
       default:
-        return { text: "⋯", label: styleText("cyan", "⋯") }
+        return {
+          text: "⋯", label: styleText("cyan", "⋯")
+        }
     }
   }
 
@@ -1657,17 +1997,27 @@ export async function handlePluginStatus() {
 
     const lsRemoteRef = row.entry.ref ? `refs/heads/${row.entry.ref}` : "HEAD"
     return execAsync(`git ls-remote "${row.entry.resolved}" ${lsRemoteRef}`)
-      .then(({ stdout }) => {
+      .then(({
+        stdout
+      }) => {
         const latestCommit = stdout.split("\t")[0].trim()
         const status = latestCommit === row.entry.commit ? "up_to_date" : "update_available"
         const display = updateDisplay(status)
         updateLine(index, display.label, display.text)
-        return { index, status, name: row.displayName }
+        return {
+          index,
+          status,
+          name: row.displayName
+        }
       })
       .catch(() => {
         const display = updateDisplay("failed")
         updateLine(index, display.label, display.text)
-        return { index, status: "failed", name: row.displayName }
+        return {
+          index,
+          status: "failed",
+          name: row.displayName
+        }
       })
   })
 
@@ -1705,10 +2055,14 @@ export async function handlePluginStatus() {
 }
 
 export async function handlePluginRestore() {
-  return handlePluginInstallUnified({ clean: true })
+  return handlePluginInstallUnified({
+    clean: true
+  })
 }
 
-export async function handlePluginPrune({ dryRun = false } = {}) {
+export async function handlePluginPrune({
+  dryRun = false
+} = {}) {
   const lockfile = readLockfile()
   if (!lockfile || Object.keys(lockfile.plugins).length === 0) {
     console.log(styleText("gray", "No plugins installed"))
@@ -1745,7 +2099,9 @@ export async function handlePluginPrune({ dryRun = false } = {}) {
     console.log(styleText("cyan", `→ Removing ${name}...`))
 
     if (fs.existsSync(pluginDir)) {
-      fs.rmSync(pluginDir, { recursive: true })
+      fs.rmSync(pluginDir, {
+        recursive: true
+      })
     }
 
     delete lockfile.plugins[name]
@@ -1763,6 +2119,11 @@ export async function handlePluginPrune({ dryRun = false } = {}) {
   console.log(styleText("gray", "Updated quartz.lock.json"))
 }
 
-export async function handlePluginResolve({ dryRun = false } = {}) {
-  return handlePluginInstallUnified({ fromConfig: true, dryRun })
+export async function handlePluginResolve({
+  dryRun = false
+} = {}) {
+  return handlePluginInstallUnified({
+    fromConfig: true,
+    dryRun
+  })
 }
