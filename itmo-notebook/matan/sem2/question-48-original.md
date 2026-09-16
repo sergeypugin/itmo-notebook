@@ -73,37 +73,37 @@ $$\sum_{k=0}^{n} \left(x - \frac{k}{n}\right)^2 C_n^k x^k (1-x)^{n-k} \le \frac{
     - Множество $K_1$: индексы, для которых $\left| x - \frac{k}{n} \right| < \delta$.
     - Множество $K_2$: индексы, для которых $\left| x - \frac{k}{n} \right| \ge \delta$.
 - Оценим первую сумму $\Sigma_1$ (по индексам из $K_1$):
-    
+
     Для этих членов выполнено неравенство равномерной непрерывности $\left| f(x) - f\left(\frac{k}{n}\right) \right| < \frac{\varepsilon}{2}$Вынося эту оценку за знак суммы, получаем:
-    
+
     $$ \Sigma_1 = \sum_{k \in K_1} \left| f(x) - f\left(\frac{k}{n}\right) \right| C_n^k x^k (1-x)^{n-k} <$$
-    
+
     $$ < \frac{\varepsilon}{2} \sum_{k \in K_1} C_n^k x^k (1-x)^{n-k} \le \frac{\varepsilon}{2} \sum_{k=0}^{n} C_n^k x^k (1-x)^{n-k} = \frac{\varepsilon}{2}$$
-    
+
 - Оценим вторую сумму $\Sigma_2$ (по индексам из $K_2$):
-    
+
     Для этих членов расстояние велико, но мы можем использовать ограниченность функции:
-    
+
     $$ \left| f(x) - f\left(\frac{k}{n}\right) \right| \le |f(x)| + \left|f\left(\frac{k}{n}\right)\right| \le 2M$$
-    
+
     Поскольку для этих членов выполнено неравенство $\frac{(x - k/n)^2}{\delta^2} \ge 1$, мы можем записать:
-    
+
     $$ \Sigma_2 = \sum_{k \in K_2} \left| f(x) - f\left(\frac{k}{n}\right) \right| C_n^k x^k (1-x)^{n-k} \le 2M \sum_{k \in K_2} C_n^k x^k (1-x)^{n-k} \le$$
-    
+
     $$ \le 2M \sum_{k \in K_2} \frac{(x - \frac{k}{n})^2}{\delta^2} C_n^k x^k (1-x)^{n-k} \le \frac{2M}{\delta^2} \sum_{k=0}^{n} \left(x - \frac{k}{n}\right)^2 C_n^k x^k (1-x)^{n-k}$$
-    
+
     Используя ранее доказанное базовое неравенство $\le \frac{1}{4n}$, окончательно получаем:
-    
+
     $$ \Sigma_2 \le \frac{2M}{\delta^2} \cdot \frac{1}{4n} = \frac{M}{2n\delta^2}$$
-    
+
 - Суммируя обе части, имеем оценку для любого $x \in [0, 1]$:
-    
+
     $$ |f(x) - B_n(f; x)| \le \Sigma_1 + \Sigma_2 < \frac{\varepsilon}{2} + \frac{M}{2n\delta^2}$$
-    
+
 - Выберем номер $N$ столь большим, чтобы для всех $n > N$ выполнялось неравенство $\frac{M}{2n\delta^2} < \frac{\varepsilon}{2}$. Это возможно, так как величина $\frac{M}{2\delta^2}$ постоянна при фиксированном $\varepsilon$ (и, соответственно, $\delta$). Таким образом, для любого $n > N$ выполнено:
-    
+
     $$ |f(x) - B_n(f; x)| < \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon$$
-    
+
 
 Поскольку выбор номера $N$ зависел исключительно от величин $M, \delta$ и $\varepsilon$ и совершенно не зависел от точки $x \in [0, 1]$, это доказывает равномерную сходимость последовательности полиномов Бернштейна к непрерывной функции $f(x)$.
 

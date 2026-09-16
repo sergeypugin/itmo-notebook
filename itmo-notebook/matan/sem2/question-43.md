@@ -28,7 +28,7 @@ $$ \int_{\delta_1}^{\delta_2} (f(x) - g(x)) \, dx = \int_{\delta_1}^{\delta_2} f
 Оценим разность интегралов от $f(x)$ и $g(x)$ с осциллирующим множителем:
 $$ \left| \int_{\delta_1}^{\delta_2} f(x)e^{i\lambda x} \, dx - \int_{\delta_1}^{\delta_2} g(x)e^{i\lambda x} \, dx \right| \leq $$
 $$\int_{\delta_1}^{\delta_2} |f(x) - g(x)| \cdot |e^{i\lambda x}| \, dx
-= \int_{\delta_1}^{\delta_2} (f(x) - g(x)) \, dx < \frac{\varepsilon}{4} 
+= \int_{\delta_1}^{\delta_2} (f(x) - g(x)) \, dx < \frac{\varepsilon}{4}
 $$
 
 **Шаг4:** Запишем интеграл от ступенчатой функции $g(x)$ в виде конечной суммы:

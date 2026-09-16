@@ -44,12 +44,12 @@
 > ```bash
 > # Установка базовых зависимостей
 > npm ci
-> 
+>
 > # Загрузка плагинов Quartz
 > npx quartz plugin install --from-config
-> 
+>
 > # Запуск локального сервера с указанием рабочей папки
 > npx quartz build --serve -d itmo-notebook
 > ```
-> 
+>
 > После выполнения команд локальная версия сайта будет доступна по адресу [http://localhost:8080](http://localhost:8080).

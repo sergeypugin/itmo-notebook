@@ -1,21 +1,47 @@
-import { promises } from "fs"
+import {
+  promises
+} from "fs"
 import path from "path"
 import esbuild from "esbuild"
-import { styleText } from "util"
-import { sassPlugin } from "esbuild-sass-plugin"
+import {
+  styleText
+} from "util"
+import {
+  sassPlugin
+} from "esbuild-sass-plugin"
 import fs from "fs"
-import { intro, outro, select, text } from "@clack/prompts"
-import { rm } from "fs/promises"
+import {
+  intro,
+  outro,
+  select,
+  text
+} from "@clack/prompts"
+import {
+  rm
+} from "fs/promises"
 import chokidar from "chokidar"
 import prettyBytes from "pretty-bytes"
-import { execSync, spawnSync } from "child_process"
+import {
+  execSync,
+  spawnSync
+} from "child_process"
 import http from "http"
 import serveHandler from "serve-handler"
-import { WebSocketServer } from "ws"
-import { randomUUID } from "crypto"
-import { Mutex } from "async-mutex"
-import { CreateArgv } from "./args.js"
-import { globby } from "globby"
+import {
+  WebSocketServer
+} from "ws"
+import {
+  randomUUID
+} from "crypto"
+import {
+  Mutex
+} from "async-mutex"
+import {
+  CreateArgv
+} from "./args.js"
+import {
+  globby
+} from "globby"
 import {
   exitIfCancel,
   escapePath,
@@ -128,8 +154,11 @@ export async function handleCreate(argv) {
     template = exitIfCancel(
       await select({
         message: "Choose a template for your Quartz configuration",
-        options: [
-          { value: "default", label: "Default", hint: "clean Quartz setup with sensible defaults" },
+        options: [{
+            value: "default",
+            label: "Default",
+            hint: "clean Quartz setup with sensible defaults"
+          },
           {
             value: "obsidian",
             label: "Obsidian",
@@ -154,9 +183,15 @@ export async function handleCreate(argv) {
     setupStrategy = exitIfCancel(
       await select({
         message: `Choose how to initialize the content in \`${contentFolder}\``,
-        options: [
-          { value: "new", label: "Empty Quartz" },
-          { value: "copy", label: "Copy an existing folder", hint: "overwrites `content`" },
+        options: [{
+            value: "new",
+            label: "Empty Quartz"
+          },
+          {
+            value: "copy",
+            label: "Copy an existing folder",
+            hint: "overwrites `content`"
+          },
           {
             value: "symlink",
             label: "Symlink an existing folder",
@@ -172,7 +207,10 @@ export async function handleCreate(argv) {
     if (contentStat.isSymbolicLink()) {
       await fs.promises.unlink(contentFolder)
     } else {
-      await rm(contentFolder, { recursive: true, force: true })
+      await rm(contentFolder, {
+        recursive: true,
+        force: true
+      })
     }
   }
 
@@ -189,8 +227,7 @@ export async function handleCreate(argv) {
         exitIfCancel(
           await text({
             message: "Enter the full path to existing content folder",
-            placeholder:
-              "On most terminal emulators, you can drag and drop a folder into the window and it will paste the full path",
+            placeholder: "On most terminal emulators, you can drag and drop a folder into the window and it will paste the full path",
             validate(fp) {
               const fullPath = escapePath(fp)
               if (!fs.existsSync(fullPath)) {
@@ -238,8 +275,7 @@ See the [documentation](https://quartz.jzhao.xyz) for how to get started.
     linkResolutionStrategy = exitIfCancel(
       await select({
         message: `Choose how Quartz should resolve links in your content. This should match Obsidian's link format. You can change this later in \`quartz.config.yaml\`.`,
-        options: [
-          {
+        options: [{
             value: "shortest",
             label: "Treat links as shortest path",
             hint: "(default)",
@@ -299,7 +335,9 @@ See the [documentation](https://quartz.jzhao.xyz) for how to get started.
   }
 
   // Update baseUrl in configuration
-  updateGlobalConfig({ baseUrl })
+  updateGlobalConfig({
+    baseUrl
+  })
 
   // install plugins referenced in the template config
   await handlePluginResolve()
@@ -364,7 +402,9 @@ export async function handleBuild(argv) {
       {
         name: "inline-script-loader",
         setup(build) {
-          build.onLoad({ filter: /\.inline\.(ts|js)$/ }, async (args) => {
+          build.onLoad({
+            filter: /\.inline\.(ts|js)$/
+          }, async (args) => {
             let text = await promises.readFile(args.path, "utf8")
 
             // remove default exports that we manually inserted
@@ -431,12 +471,16 @@ export async function handleBuild(argv) {
           meta.bytes,
         )})`,
       )
-      console.log(await esbuild.analyzeMetafile(result.metafile, { color: true }))
+      console.log(await esbuild.analyzeMetafile(result.metafile, {
+        color: true
+      }))
     }
 
     // bypass module cache
     // https://github.com/nodejs/modules/issues/307
-    const { default: buildQuartz } = await import(`../../${cacheFile}?update=${randomUUID()}`)
+    const {
+      default: buildQuartz
+    } = await import(`../../${cacheFile}?update=${randomUUID()}`)
     // ^ this import is relative, so base "cacheFile" path can't be used
 
     cleanupBuild = await buildQuartz(argv, buildMutex, clientRefresh)
@@ -474,27 +518,35 @@ export async function handleBuild(argv) {
         await serveHandler(req, res, {
           public: argv.output,
           directoryListing: false,
-          headers: [
-            {
+          headers: [{
               source: "**/*.*",
-              headers: [{ key: "Content-Disposition", value: "inline" }],
+              headers: [{
+                key: "Content-Disposition",
+                value: "inline"
+              }],
             },
             {
               source: "**/*.webp",
-              headers: [{ key: "Content-Type", value: "image/webp" }],
+              headers: [{
+                key: "Content-Type",
+                value: "image/webp"
+              }],
             },
             // fixes bug where avif images are displayed as text instead of images (future proof)
             {
               source: "**/*.avif",
-              headers: [{ key: "Content-Type", value: "image/avif" }],
+              headers: [{
+                key: "Content-Type",
+                value: "image/avif"
+              }],
             },
           ],
         })
         const status = res.statusCode
         const statusString =
-          status >= 200 && status < 300
-            ? styleText("green", `[${status}]`)
-            : styleText("red", `[${status}]`)
+          status >= 200 && status < 300 ?
+          styleText("green", `[${status}]`) :
+          styleText("red", `[${status}]`)
         console.log(statusString + styleText("gray", ` ${argv.baseDir}${req.url}`))
         release()
       }
@@ -506,7 +558,7 @@ export async function handleBuild(argv) {
         })
         console.log(
           styleText("yellow", "[302]") +
-            styleText("gray", ` ${argv.baseDir}${req.url} -> ${newFp}`),
+          styleText("gray", ` ${argv.baseDir}${req.url} -> ${newFp}`),
         )
         res.end()
       }
@@ -563,7 +615,9 @@ export async function handleBuild(argv) {
       throw err
     })
     server.listen(argv.port)
-    const wss = new WebSocketServer({ port: argv.wsPort })
+    const wss = new WebSocketServer({
+      port: argv.wsPort
+    })
     wss.on("error", (err) => {
       if (err.code === "EADDRINUSE") {
         console.error(
@@ -597,7 +651,9 @@ export async function handleBuild(argv) {
       "quartz.config.default.yaml",
     ])
     chokidar
-      .watch(paths, { ignoreInitial: true })
+      .watch(paths, {
+        ignoreInitial: true
+      })
       .on("add", () => build(clientRefresh))
       .on("change", () => build(clientRefresh))
       .on("unlink", () => build(clientRefresh))
@@ -653,7 +709,7 @@ export async function handleUpgrade(argv) {
     if (!pullOk) {
       console.log(
         styleText("red", "An error occurred while pulling updates.") +
-          "\nCheck your network connection and git credentials. If you see merge conflicts, resolve them manually and run `npx quartz sync --no-pull`.",
+        "\nCheck your network connection and git credentials. If you see merge conflicts, resolve them manually and run `npx quartz sync --no-pull`.",
       )
       await popContentFolder(contentFolder)
       if (fs.existsSync(lockfileBackup)) fs.unlinkSync(lockfileBackup)
@@ -691,7 +747,9 @@ export async function handleUpgrade(argv) {
   See: https://nodejs.org/api/child_process.html#spawning-bat-and-cmd-files-on-windows
   */
 
-  const opts = { stdio: "inherit" }
+  const opts = {
+    stdio: "inherit"
+  }
   if (process.platform === "win32") {
     opts.shell = true
   }
@@ -702,7 +760,7 @@ export async function handleUpgrade(argv) {
   } else {
     console.log(
       styleText("red", "An error occurred while installing dependencies.") +
-        "\nTry running `npm install` manually to see detailed errors.",
+      "\nTry running `npm install` manually to see detailed errors.",
     )
   }
 
@@ -754,8 +812,12 @@ export async function handleSync(argv) {
       timeStyle: "short",
     })
     const commitMessage = argv.message ?? `Quartz sync: ${currentTimestamp}`
-    spawnSync("git", ["add", "."], { stdio: "inherit" })
-    spawnSync("git", ["commit", "-m", commitMessage], { stdio: "inherit" })
+    spawnSync("git", ["add", "."], {
+      stdio: "inherit"
+    })
+    spawnSync("git", ["commit", "-m", commitMessage], {
+      stdio: "inherit"
+    })
 
     if (contentStat.isSymbolicLink()) {
       // put symlink back
@@ -774,7 +836,7 @@ export async function handleSync(argv) {
     } catch {
       console.log(
         styleText("red", "An error occurred while pulling updates from your repository.") +
-          "\nCheck your network connection and git credentials.",
+        "\nCheck your network connection and git credentials.",
       )
       await popContentFolder(contentFolder)
       return
@@ -791,7 +853,7 @@ export async function handleSync(argv) {
     if (res.status !== 0) {
       console.log(
         styleText("red", `An error occurred while pushing to remote ${ORIGIN_NAME}.`) +
-          "\nCheck that you have push access to the remote repository.",
+        "\nCheck that you have push access to the remote repository.",
       )
       return
     }
