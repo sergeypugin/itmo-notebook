@@ -38,4 +38,15 @@ views:
     sort:
       - property: formula.q_num
         direction: ASC
+  - type: table
+    name: Sergey
+    filters:
+      and:
+        - note.author == "Alllexey"
+    order:
+      - formula.q_num
+      - title
+    sort:
+      - property: formula.q_num
+        direction: ASC
 ```
