@@ -13,7 +13,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Для PR забираем исходную ветку автора, для push — текущую
+          token: ${{ secrets.AUTO_FORMAT_TOKEN || github.token }}
+          # Если это PR, клонируем репозиторий-источник (даже если это форк)
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup Node.js
@@ -41,3 +43,5 @@ jobs:
           # Используется [skip ci], чтобы предотвратить рекурсивный запуск
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
+        env:
+          GITHUB_TOKEN: ${{ secrets.AUTO_FORMAT_TOKEN }}
