@@ -1,3 +1,4 @@
+# By default
 .DS_Store
 .gitignore
 .idea
@@ -14,3 +15,6 @@ replit.nix
 quartz/cli/tui/dist/
 .turbo/
 _ignore
+
+# By me
+lection_photo

@@ -51,5 +51,12 @@
 > # Запуск локального сервера с указанием рабочей папки
 > npx quartz build --serve -d itmo-notebook
 > ```
->
+> Ну или сразу всё одной командой (для **Bash**, **zsh** или **Git Bash**):
+> ```bash
+> npm ci && npx quartz plugin install --from-config && npx quartz build --serve -d itmo-notebook
+> ```
+> Если вы используете **PowerShell**, используйте `;` вместо `&&`:
+> ```powershell
+> npm ci ; npx quartz plugin install --from-config ; npx quartz build --serve -d itmo-notebook
+> ```
 > После выполнения команд локальная версия сайта будет доступна по адресу [http://localhost:8080](http://localhost:8080).
