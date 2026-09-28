@@ -10,9 +10,14 @@
   box-sizing: border-box;
 
   & > .callout-content {
-    transition: max-height 0.3s ease-in-out;
-    max-height: 100vh;
-    overflow: hidden;
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.25s ease-out;
+
+    & > * {
+      min-height: 0;
+      overflow-y: hidden;
+    }
 
     & > :first-child {
       margin-top: 0;
@@ -119,12 +124,14 @@
   }
 
   &.is-collapsed {
+    grid-template-rows: 0fr;
+
     & > .callout-title > .fold-callout-icon {
       transform: rotateZ(-90deg);
     }
 
     & > .callout-content {
-      max-height: 0;
+      grid-template-rows: 0fr;
     }
   }
 }
