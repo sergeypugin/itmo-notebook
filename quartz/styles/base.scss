@@ -659,9 +659,70 @@ ol.overflow {
 }
 
 .katex-display {
-  display: initial;
-  overflow-x: auto;
-  overflow-y: hidden;
+  display: block;
+  position: relative;
+  width: 100%;
+
+  @media all and ($mobile) {
+    &:has(.tag) {
+      padding-bottom: 2rem !important;
+    }
+  }
+
+  & > .katex {
+    display: block !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    position: static !important; // Чтобы абсолютный .tag позиционировался относительно .katex-display
+    scrollbar-width: thin;
+    scrollbar-color: var(--lightgray) transparent;
+
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--lightgray);
+      border-radius: 4px;
+    }
+
+    & > .katex-html {
+      display: block;
+      position: static !important; // Пропускаем позиционирование .tag
+
+      // На десктопе резервируем место справа, чтобы прокручиваемый контент не залезал под фиксированный тег
+      &:has(> .tag) {
+        padding-right: 4.5rem;
+      }
+
+      @media all and ($mobile) {
+        &:has(> .tag) {
+          padding-right: 0 !important;
+        }
+      }
+
+      & > .tag {
+        position: absolute !important;
+        right: 0 !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        bottom: auto !important;
+        left: auto !important;
+
+        @media all and ($mobile) {
+          top: auto !important;
+          transform: none !important;
+          bottom: 0 !important;
+          right: 0 !important;
+        }
+      }
+    }
+  }
 }
 
 .external-embed.youtube,
