@@ -238,7 +238,7 @@
             "properties": {
               "position": {
                 "type": "string",
-                "enum": ["left", "right", "beforeBody", "afterBody", "body"],
+                "enum": ["left", "right", "beforeBody", "afterBody", "header", "footer", "body"],
                 "description": "Layout position"
               },
               "priority": {
