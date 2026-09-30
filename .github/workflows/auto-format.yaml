@@ -11,7 +11,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.AUTO_FORMAT_TOKEN || github.token }}
           # Если это PR, клонируем репозиторий-источник (даже если это форк)
@@ -19,7 +19,7 @@ jobs:
           ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: lts/*
 
@@ -37,7 +37,7 @@ jobs:
 
       # 4. Автоматически коммитим изменения
       - name: Auto-commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "style: auto-format via `.editorconfig` [skip ci]"
           # Используется [skip ci], чтобы предотвратить рекурсивный запуск
