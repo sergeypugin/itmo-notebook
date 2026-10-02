@@ -6,6 +6,8 @@ import { QuartzEmitterPlugin } from "../types"
 import spaRouterScript from "../../components/scripts/spa.inline"
 // @ts-ignore
 import popoverScript from "../../components/scripts/popover.inline"
+// @ts-ignore
+import searchScrollScript from "../../components/scripts/searchScroll.inline"
 import baseStyles from "../../styles/base.scss"
 import customStyles from "../../styles/custom.scss"
 import popoverStyle from "../../components/styles/popover.scss"
@@ -268,6 +270,9 @@ function addGlobalPageResources(ctx: BuildCtx, componentResources: ComponentReso
       document.dispatchEvent(event)
     `)
   }
+
+  // Correct search preview scroll position to target the first highlight
+  componentResources.afterDOMLoaded.push(searchScrollScript)
 }
 
 // This emitter should not update the `resources` parameter. If it does, partial
@@ -520,6 +525,6 @@ export const ComponentResources: QuartzEmitterPlugin = () => {
         content: postscript,
       })
     },
-    async *partialEmit() {},
+    async *partialEmit() { },
   }
 }
