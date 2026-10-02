@@ -20,7 +20,7 @@ $$
 > \operatorname{tg}\alpha = \frac{\partial f}{\partial y}(x_0, y_0)
 > $$
 >
-> ![[geometric_meaning_tangent.jpg|4000]]
+> ![[geometric_meaning_tangent.jpg|400]]
 >
 > Если провести плоскость, параллельную $ZOX$ ($y = y_0$), то аналогичное построение покажет, что тангенс угла наклона касательной будет равен частной производной $\frac{\partial f}{\partial x}(x_0, y_0)$.
 
