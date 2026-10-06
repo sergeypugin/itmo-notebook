@@ -150,4 +150,4 @@ $$
 > $$
 
 ---
-[[lection-2|Предыдущая лекция]] | [[matan/sem3/lection_notes/index|Все лекции]]
+[[lection-2|Предыдущая лекция]] | [[matan/sem3/lection_notes/index|Все лекции]] | [[lection-4|Следующая лекция]]
