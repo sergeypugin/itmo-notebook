@@ -18,3 +18,4 @@ _ignore
 
 # By me
 lection_photo
+__pycache__/
