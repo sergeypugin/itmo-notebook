@@ -42,7 +42,7 @@ $$ \lim_{n \to \infty} \sup_{x \in D} |R_n(x)| = 0 $$
 $$ \forall \varepsilon > 0 \ \exists n_0 \in \mathbb{N} : \forall n > n_0 \ \forall p \in \mathbb{N} \ \forall x \in D \implies \left| \sum_{k=n+1}^{n+p} f_k(x) \right| < \varepsilon $$
 >Эквивалентная формулировка для последовательности функций $S_n(x)$
 > $$\forall \varepsilon > 0 \ \exists N \in \mathbb{N} : \forall n, m \ge N \  \forall x \in D: \ \left| S_n(x) - S_m(x) \right| < \varepsilon$$
->О том, почему она эквивалентна, можно прочитать в [[24. Критерий Коши сходимости ряда |доказательстве Критерия Коши (вопрос 24)]]. Но идея в том, что $\sum_{k=n+1}^{n+p} f_k(x)=S_{n+p}(x) - S_n(x)$.
+>О том, почему она эквивалентна, можно прочитать в [доказательстве Критерия Коши (вопрос 24)](24.%20Критерий%20Коши%20сходимости%20ряда). Но идея в том, что $\sum_{k=n+1}^{n+p} f_k(x)=S_{n+p}(x) - S_n(x)$.
 #### Доказательство:
 
 - **Необходимость ($\implies$):** Пусть ряд сходится равномерно к $S(x)$, то есть $S_n(x) \rightrightarrows S(x)$.
