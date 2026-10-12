@@ -137,4 +137,4 @@ $$
 > Большинство доказательств аналогичны курсу первого семестра.
 
 ---
-[[matan/sem3/lection_notes/index|Все лекции]] | [[lection-2|Следующая лекция]]
+[Все лекции](matan/sem3/lection_notes/index) | [Следующая лекция](matan/sem3/lection_notes/lection-2)

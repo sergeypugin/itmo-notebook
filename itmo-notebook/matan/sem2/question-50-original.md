@@ -7,7 +7,7 @@ links:
   - "[Никольский 1 том.pdf](https://drive.google.com/file/d/1GsOuXkK0v_N22dWdAFFCVkGQasAc1g8u/view?usp=drivesdk)"
 ---
 
-Упрощённую версию можно найти [[question-50|в этой заметке]].
+Упрощённую версию можно найти [в этой заметке](matan/sem2/question-50).
 
 ## Главное про многочлены Чебышёва первого и второго рода
 
@@ -262,4 +262,4 @@ links:
     $$b_n = (n+1)a_{n+1}$$
 
 
-![[Exploding Brain.gif]]
+![Exploding Brain.gif](matan/sem2/Attachments/Exploding%20Brain.gif)

@@ -16,11 +16,11 @@ author: Lesha
 
 Сначала Архимед нашел значения параболы в точках стыка:
 
-![[parabola.png|200]] ![[parts_parabola.png|200]]
+![parabola.png|200](matan/sem2/Attachments/parabola.png) ![parts_parabola.png|200](matan/sem2/Attachments/parts_parabola.png)
 
 Затем продлил эти стыки вправо и получил 10 прямоугольников (один просто маленький очень). То же самое Архимед сделал ещё раз, но теперь продлил стыки влево.
 
-![[right_parabola.png|200]] ![[left_parabola.png|200]]
+![right_parabola.png|200](matan/sem2/Attachments/right_parabola.png) ![left_parabola.png|200](matan/sem2/Attachments/left_parabola.png)
 
 А найти площадь этих прямоугольников не тяжело.
 Для правых получим $S_н = \sum_{i=0}^{9} \frac{1}{10} * \left(\frac{i}{10}\right)^2 = 0.285$
@@ -28,7 +28,7 @@ author: Lesha
 
 Но ведь мы можем пойти дальше и взять больше точек. И чем больше прямоугольников у нас будет, тем больше они будут походить на пространство под параболой.
 
-![[many_parabola.png|150]]
+![many_parabola.png|150](matan/sem2/Attachments/many_parabola.png)
 
 ### Общий вид
 

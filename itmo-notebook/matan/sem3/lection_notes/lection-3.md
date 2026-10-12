@@ -18,7 +18,7 @@ $$
 > [!note]- Геометрический смысл дифференциала
 > Дифференциал — это приращение касательной.
 >
-> ![[differential_geometric_meaning.jpg|400]]
+> ![differential_geometric_meaning.jpg|400](matan/sem3/lection_notes/Attachments/differential_geometric_meaning.jpg)
 
 > [!theorem] Теорема 9 (Уравнение касательной плоскости)
 > Поверхность задана уравнением $z = f(x, y)$ и имеет касательную плоскость в точке $M_0(x_0, y_0, z_0)$.
@@ -150,4 +150,4 @@ $$
 > $$
 
 ---
-[[lection-2|Предыдущая лекция]] | [[matan/sem3/lection_notes/index|Все лекции]] | [[lection-4|Следующая лекция]]
+[Предыдущая лекция](matan/sem3/lection_notes/lection-2) | [Все лекции](matan/sem3/lection_notes/index) | [Следующая лекция](matan/sem3/lection_notes/lection-4)

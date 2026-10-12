@@ -5,7 +5,7 @@ links:
   - "[Кудрявцев_Л_Д_Математический_анализ_том_2_2.pdf](https://drive.google.com/file/d/1A9iwsI2Uh7gHamAWOprOR81lh0qZg71d/view?usp=drivesdk)"
 ---
 
-Данный билет - упрощённая версия [[question-50-original|этой заметки]].
+Данный билет - упрощённая версия [этой заметки](matan/sem2/question-50-original).
 
 ## Полиномы Чебышёва и разложения по ним
 

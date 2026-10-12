@@ -4,7 +4,7 @@ author: Ivan
 links:
   - "[Многочлены Бернштейна.pdf](https://drive.google.com/file/d/1CtIhMJKFYVo8FLcT9XiA3VbUyx7f5YDH/view?usp=drivesdk)"
 ---
-Многочлены Бернштейна позволяют конструктивно доказать [[question-48|теорему Вейерштрасса]]
+Многочлены Бернштейна позволяют конструктивно доказать [теорему Вейерштрасса](matan/sem2/question-48)
 
 ## Многочлены Бернштейна
 
