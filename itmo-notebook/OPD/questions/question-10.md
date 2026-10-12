@@ -30,11 +30,11 @@ author: Luisa
 **ASL и ASR** — выполняют арифметические сдвиги влево и вправо соответственно.
 >Арифметические сдвиги позволяют реализовать умножение и деление на степени двойки.
 
-![[alu-sum-and-and.png]]
+![alu-sum-and-and.png](OPD/questions/Attachments/alu-sum-and-and.png)
 
-![[rol_asl.png]]
+![rol_asl.png](OPD/questions/Attachments/rol_asl.png)
 
-![[ror-ars.png]]
+![ror-ars.png](OPD/questions/Attachments/ror-ars.png)
 ## Цикл выборки команды
 
 Перед выполнением команды процессор должен считать её из памяти и определить её тип. В БЭВМ цикл выборки команды описывается следующей последовательностью микрокоманд:

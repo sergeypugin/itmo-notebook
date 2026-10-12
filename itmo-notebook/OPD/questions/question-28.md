@@ -25,7 +25,7 @@ author: Luisa
 ---
 ## Пирамида памяти
 
-![[Pasted image 20260625160640.png]]
+![Pasted image 20260625160640.png](OPD/questions/Attachments/Pasted%20image%2020260625160640.png)
 
 По мере удаления от процессора:
 

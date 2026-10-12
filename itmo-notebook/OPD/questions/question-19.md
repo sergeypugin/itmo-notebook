@@ -12,7 +12,7 @@ author: Sergey
 
 Каждый уровень представляет собой виртуальную машину со своим собственным языком программирования.
 
-![[multi_level_pyramid.png]]
+![multi_level_pyramid.png](OPD/questions/Attachments/multi_level_pyramid.png)
 
 ## Иерархия уровней ЭВМ и пример программы
 
