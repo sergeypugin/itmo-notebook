@@ -3,145 +3,182 @@ import os
 import re
 import sys
 from pathlib import Path
+from urllib.parse import quote
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
-CONTENT_ROOT = REPO_ROOT / 'itmo-notebook'
-
+CONTENT_ROOT = REPO_ROOT / "itmo-notebook"
 BLUE_BIBLE_URL = "https://se.ifmo.ru/documents/10180/38002/%D0%92%D0%B2%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D0%B5+%D0%B2+%D0%9C%D0%B8%D0%BA%D1%80%D0%BE%D0%AD%D0%92%D0%9C/3e6ac9c1-5b92-4f49-ae32-1a00fb9b021c"
+WIKILINK = re.compile(r"!?\[\[([^\]]*)\]\]", re.DOTALL)
+IGNORED_DIRS = {".obsidian", "_ignore", ".git", "node_modules"}
+
 
 class LinkConverter:
     def __init__(self, root_dir):
         self.root_dir = root_dir
-        self.file_index = self._build_index()
+        self.paths = {}
+        self.names = {}
+        self.build_index()
 
-    def _build_index(self):
-        index = {}
-        for root, _, files in os.walk(self.root_dir):
-            for f in files:
-                full_path = Path(root) / f
-                rel_path = full_path.relative_to(self.root_dir)
-                name = f
-                stem = full_path.stem
+    def build_index(self):
+        for path in self.markdown_files():
+            relative_path = path.relative_to(self.root_dir)
+            self.add_index_entry(relative_path.as_posix(), relative_path)
+            self.add_index_entry(relative_path.with_suffix("").as_posix(), relative_path)
+            self.add_index_entry(path.name, relative_path)
+            self.add_index_entry(path.stem, relative_path)
 
-                index.setdefault(name.lower(), []).append(rel_path)
-                if name.lower() != stem.lower():
-                    index.setdefault(stem.lower(), []).append(rel_path)
-        return index
+        for path in self.root_dir.rglob("*"):
+            relative_parts = path.relative_to(self.root_dir).parts
+            if path.is_file() and path.suffix.lower() != ".md" and not any(
+                part in IGNORED_DIRS for part in relative_parts
+            ):
+                relative_path = path.relative_to(self.root_dir)
+                self.add_index_entry(relative_path.as_posix(), relative_path)
+                self.add_index_entry(path.name, relative_path)
+                self.add_index_entry(path.stem, relative_path)
 
-    def resolve_path(self, target, current_file_rel):
-        target_clean = target.replace('\\', '/').strip()
-        if not target_clean:
-            return None, ""
+    def add_index_entry(self, key, path):
+        normalized_key = key.lower().replace("\\", "/")
+        paths = self.paths if "/" in normalized_key else self.names
+        paths.setdefault(normalized_key, set()).add(path)
 
-        anchor = ""
-        if '#' in target_clean:
-            target_clean, anchor = target_clean.split('#', 1)
-            anchor = '#' + anchor
+    def markdown_files(self):
+        for path in self.root_dir.rglob("*.md"):
+            relative_parts = path.relative_to(self.root_dir).parts
+            if not any(part in IGNORED_DIRS for part in relative_parts):
+                yield path
 
-        search_path = target_clean if target_clean.lower().endswith('.md') else target_clean + '.md'
-        for paths in self.file_index.values():
-            for p in paths:
-                p_posix = p.as_posix().lower()
-                if p_posix == target_clean.lower() or p_posix == search_path.lower():
-                    return p, anchor
+    def resolve_path(self, target, current_file):
+        normalized_target = target.replace("\\", "/").strip()
+        target_path, separator, fragment = normalized_target.partition("#")
+        anchor = f"#{fragment}" if separator else ""
+        if not target_path:
+            return None, anchor, "empty target", set()
 
-        name = target_clean.split('/')[-1].lower()
-        matches = self.file_index.get(name, [])
+        explicit_path = target_path.lower()
+        if explicit_path in self.paths:
+            matches = self.paths[explicit_path]
+            if len(matches) == 1:
+                return next(iter(matches)), anchor, "", set()
+            return None, anchor, "ambiguous path", matches
+
+        if not explicit_path.endswith(".md") and f"{explicit_path}.md" in self.paths:
+            matches = self.paths[f"{explicit_path}.md"]
+            if len(matches) == 1:
+                return next(iter(matches)), anchor, "", set()
+            return None, anchor, "ambiguous path", matches
+
+        name = target_path.rsplit("/", 1)[-1].lower()
+        matches = set(self.names.get(name, set()))
+        if not matches and not name.endswith(".md"):
+            matches = set(self.names.get(f"{name}.md", set()))
+
         if not matches:
-            matches = self.file_index.get(name + '.md', [])
-
-        if not matches:
-            return None, anchor
-
+            return None, anchor, "target not found", set()
         if len(matches) == 1:
-            return matches[0], anchor
+            return next(iter(matches)), anchor, "", set()
 
-        current_root = current_file_rel.parts[0] if current_file_rel.parts else None
-        if current_root:
-            same_section_matches = [p for p in matches if p.parts and p.parts[0] == current_root]
-            if same_section_matches:
-                same_dir_matches = [p for p in same_section_matches if p.parent == current_file_rel.parent]
-                if same_dir_matches:
-                    return same_dir_matches[0], anchor
-                return same_section_matches[0], anchor
+        same_directory = {path for path in matches if path.parent == current_file.parent}
+        if len(same_directory) == 1:
+            return next(iter(same_directory)), anchor, "", set()
+        if same_directory:
+            return None, anchor, "ambiguous in current directory", same_directory
+        return None, anchor, "ambiguous target", matches
 
-        return matches[0], anchor
-
-    def convert_text(self, text, file_rel_path):
-        pattern = re.compile(r'(!?)\[\[(.*?)\]\]')
+    def convert_text(self, text, current_file):
+        unresolved = []
 
         def replace_link(match):
-            prefix = match.group(1)
-            content = match.group(2)
-
-            parts = content.replace(r'\|', '|').split('|')
-            target_raw = parts[0].strip()
+            raw_content = match.group(1)
+            parts = raw_content.replace(r"\|", "|").split("|")
+            target = parts[0].strip()
             alias = parts[1].strip() if len(parts) > 1 else None
 
-            if target_raw == 'blue_bible.pdf':
-                display = alias if alias else 'синяя библия'
-                return f'[{display}]({BLUE_BIBLE_URL})'
+            if target == "blue_bible.pdf":
+                return f"[{alias or 'синяя библия'}]({BLUE_BIBLE_URL})"
 
-            resolved, anchor = self.resolve_path(target_raw, file_rel_path)
+            resolved, anchor, reason, candidates = self.resolve_path(target, current_file)
+            if resolved is None:
+                line_number = text.count("\n", 0, match.start()) + 1
+                unresolved.append((line_number, match.group(0), reason, candidates))
+                return match.group(0)
 
-            if resolved:
-                if resolved.suffix == '.md':
-                    url_path = resolved.as_posix()[:-3]
-                else:
-                    url_path = resolved.as_posix()
-            else:
-                print(f"Warning: Could not resolve '{target_raw}' in {file_rel_path}")
-                url_path = target_raw.replace(' ', '%20')
+            url_path = resolved.as_posix()
+            display_name = resolved.stem if resolved.suffix.lower() == ".md" else resolved.name
+            if resolved.suffix.lower() == ".md":
+                url_path = url_path[:-3]
+            url = quote(url_path, safe="/#") + anchor
 
-            url_encoded = url_path.replace(' ', '%20')
-
-            if prefix == '!':
+            if match.group(0).startswith("!"):
                 if alias and alias.isdigit():
-                    return f'![{resolved.name if resolved else target_raw}|{alias}]({url_encoded}{anchor})'
+                    return f"![{display_name}|{alias}]({url})"
+                return f"![{alias or display_name}]({url})"
+            return f"[{alias or display_name}]({url})"
 
-                alt_text = alias if alias else (resolved.stem if resolved and resolved.suffix == '.md' else (resolved.name if resolved else target_raw))
-                return f'![{alt_text}]({url_encoded}{anchor})'
+        return WIKILINK.sub(replace_link, text), unresolved
 
-            default_display = (resolved.name if resolved.suffix != '.md' else resolved.stem) if resolved else target_raw
-            display_text = alias if alias else default_display
-            return f'[{display_text}]({url_encoded}{anchor})'
+    def run(self, check_only=False):
+        unresolved_count = 0
+        updates = {}
 
-        return pattern.sub(replace_link, text)
+        for path in self.markdown_files():
+            relative_path = path.relative_to(self.root_dir)
+            content = path.read_text(encoding="utf-8")
 
-    def convert_file(self, file_rel_path):
-        path = self.root_dir / file_rel_path
-        if not path.exists():
-            return False
-
-        try:
-            content = path.read_text(encoding='utf-8')
-            new_content = self.convert_text(content, file_rel_path)
-            if content != new_content:
-                path.write_text(new_content, encoding='utf-8')
-                return True
-        except Exception as e:
-            print(f"Error processing {file_rel_path}: {e}")
-        return False
-
-    def process_all(self):
-        changed_total = 0
-        for root, _, files in os.walk(self.root_dir):
-            if any(x in root for x in ['.obsidian', '.git', 'node_modules', '_ignore']):
+            if check_only:
+                for match in WIKILINK.finditer(content):
+                    parts = match.group(1).replace(r"\|", "|").split("|")
+                    target = parts[0].strip()
+                    _, _, reason, candidates = self.resolve_path(target, relative_path)
+                    reason = reason or "wikilink remains unconverted"
+                    line_number = content.count("\n", 0, match.start()) + 1
+                    msg = f"{path.relative_to(REPO_ROOT).as_posix()}:{line_number}: {reason}: {match.group(0)}"
+                    if candidates:
+                        cand_str = ", ".join(c.as_posix() for c in sorted(candidates))
+                        msg += f" (candidates: {cand_str})"
+                    print(msg)
+                    unresolved_count += 1
                 continue
-            for f in files:
-                if f.endswith('.md'):
-                    path = Path(root) / f
-                    rel_path = path.relative_to(self.root_dir)
-                    if self.convert_file(rel_path):
-                        print(f"Converted: {rel_path}")
-                        changed_total += 1
-        print(f"\nTotal files updated: {changed_total}")
+
+            converted, unresolved = self.convert_text(content, relative_path)
+            for line_number, link, reason, candidates in unresolved:
+                msg = f"{path.relative_to(REPO_ROOT).as_posix()}:{line_number}: {reason}: {link}"
+                if candidates:
+                    cand_str = ", ".join(c.as_posix() for c in sorted(candidates))
+                    msg += f" (candidates: {cand_str})"
+                print(msg)
+                unresolved_count += 1
+
+            if converted != content:
+                updates[path] = converted
+
+        if unresolved_count > 0:
+            if not check_only:
+                print(f"\nLink conversion aborted: {unresolved_count} unresolved/ambiguous wikilink(s) found.")
+                print("No files were modified. Please fix the links above and try again.")
+            else:
+                print(f"\nLink check failed: {unresolved_count} unconverted wikilink(s) found.")
+            return 1
+
+        if not check_only:
+            for path, converted in updates.items():
+                path.write_text(converted, encoding="utf-8")
+            print(f"Link conversion passed: updated {len(updates)} file(s)")
+        else:
+            print("Link check passed: no wikilinks found")
+
+        return 0
+
+
+def main():
+    if len(sys.argv) != 2 or sys.argv[1] not in {"apply-all", "check"}:
+        print("Usage: python scripts/convert_links.py apply-all|check")
+        return 2
+
+    converter = LinkConverter(CONTENT_ROOT)
+    return converter.run(check_only=sys.argv[1] == "check")
+
 
 if __name__ == "__main__":
-    converter = LinkConverter(CONTENT_ROOT)
-
-    if len(sys.argv) > 1 and sys.argv[1] == 'apply-all':
-        converter.process_all()
-    else:
-        print("Usage: python scripts/convert_links.py apply-all")
+    sys.exit(main())

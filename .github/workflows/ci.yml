@@ -1,0 +1,114 @@
+name: Validate, format, and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      AUTO_FORMAT_TOKEN: ${{ secrets.AUTO_FORMAT_TOKEN }}
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.event_name == 'pull_request' && secrets.AUTO_FORMAT_TOKEN || github.token }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Convert links
+        run: python scripts/convert_links.py apply-all
+
+      - name: Format math
+        run: python scripts/check_math.py
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Apply EditorConfig rules
+        run: npx eclint fix "**/*"
+
+      - name: Restore workflow files
+        run: git checkout -- .github/workflows/ || true
+
+      - name: Require a write token when formatting changed files
+        if: ${{ github.event_name == 'pull_request' && env.AUTO_FORMAT_TOKEN == '' }}
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Set AUTO_FORMAT_TOKEN so the formatter can push its changes"
+            exit 1
+          fi
+
+      - name: Commit formatting changes
+        if: ${{ github.event_name != 'pull_request' || env.AUTO_FORMAT_TOKEN != '' }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: normalize markdown content"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          branch: ${{ github.head_ref || github.ref_name }}
+
+  build:
+    needs: format
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install plugins
+        run: npx quartz plugin install
+
+      - name: Set baseUrl for GitHub Pages
+        run: |
+          sed -i "s|baseUrl:.*|baseUrl: ${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}|" quartz.config.yaml
+
+      - name: Build Quartz
+        run: npx quartz build -d itmo-notebook
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
