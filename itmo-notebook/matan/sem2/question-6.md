@@ -89,8 +89,7 @@ $$
 Итог:
 
 $$
-\int \frac{x^2\,dx}{\sqrt{x^2+2x+5}} = \left(\frac{x}{2}-\frac{3}{2}\right)\sqrt{x^2+2x+5} -$$
-$$- \ln\!\left|x+1+\sqrt{x^2+2x+5}\right|+C.
+\int \frac{x^2\,dx}{\sqrt{x^2+2x+5}} = \left(\frac{x}{2}-\frac{3}{2}\right)\sqrt{x^2+2x+5} - \ln\!\left|x+1+\sqrt{x^2+2x+5}\right|+C.
 $$
 
 ---

@@ -59,6 +59,7 @@ jobs:
           commit_message: "chore: normalize markdown content"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           branch: ${{ github.head_ref || github.ref_name }}
 
   build:
