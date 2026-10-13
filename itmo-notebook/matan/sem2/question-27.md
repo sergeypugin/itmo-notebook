@@ -54,7 +54,7 @@ $$
 
 ---
 
-### 3. Признак Бертрана (Куммер при $b_k = k \ln k$)
+### 3. Признак Бертрана (Куммер при bk = k ln k)
 
 Пусть $a_k > 0$ и $l = \lim_{k\to\infty} \ln k \cdot \left(k\left(\frac{a_k}{a_{k+1}} - 1\right) - 1\right)$.
 *   $l > 1 \implies \sum a_k$ сходится;
