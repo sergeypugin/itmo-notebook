@@ -27,7 +27,20 @@ $$
 \omega(f, E) = \sup_{x, y \in E} |f(x) - f(y)| = \sup_E f - \inf_E f.
 $$
 
-Для любого $E$ верны неравенства: $$\omega(\alpha f + \beta g, E) \le |\alpha|\omega(f,E) + |\beta|\omega(g,E)$$$$\omega(fg,E) \le C(\omega(f,E)+\omega(g,E))$$ $$\omega(|f|,E) \le \omega(f,E)$$$$\omega(1/f,E) \le \omega(f,E)/C^2$$Далее применяется критерий Дарбу:
+Для любого $E$ верны неравенства:
+$$
+\omega(\alpha f + \beta g, E) \le |\alpha|\omega(f,E) + |\beta|\omega(g,E)
+$$
+$$
+\omega(fg,E) \le C(\omega(f,E)+\omega(g,E))
+$$
+$$
+\omega(|f|,E) \le \omega(f,E)
+$$
+$$
+\omega(1/f,E) \le \omega(f,E)/C^2
+$$
+Далее применяется критерий Дарбу:
 $$
 \lim_{\lambda(\tau) \to 0} (S_\tau(f) - s_\tau(f)) = 0.
 $$
@@ -69,15 +82,28 @@ $$
 ## Свойства определённого интеграла
 
 ### Линейность
-$$\int_a^b (\alpha f + \beta g) = \alpha \int_a^b f + \beta \int_a^b g$$Следует из равенства интегральных сумм и предельного перехода.
+$$
+\int_a^b (\alpha f + \beta g) = \alpha \int_a^b f + \beta \int_a^b g
+$$
+Следует из равенства интегральных сумм и предельного перехода.
 ### Аддитивность по промежутку
 
-$$\int_a^b f = \int_a^c f + \int_c^b f, \quad \text{где} \quad c \in [a,b]$$Доказательство через разбиение, содержащее точку $c$.
+$$
+\int_a^b f = \int_a^c f + \int_c^b f, \quad \text{где} \quad c \in [a,b]
+$$
+Доказательство через разбиение, содержащее точку $c$.
 
 ### Монотонность
-Если $f \le g$ на $[a,b]$, то $$\int_a^b f \le \int_a^b g$$
+Если $f \le g$ на $[a,b]$, то
+$$
+\int_a^b f \le \int_a^b g
+$$
 ### Оценка интеграла
-$$m(b-a) \le \int_a^b f \le M(b-a), \quad \text{где} \quad m = \inf f, M = \sup f$$
+$$
+m(b-a) \le \int_a^b f \le M(b-a), \quad \text{где} \quad m = \inf f, M = \sup f
+$$
 ### Связь интеграла от функции и интеграла от модуля
 
-$$|\int_a^b f| \le \int_a^b |f|$$
+$$
+|\int_a^b f| \le \int_a^b |f|
+$$

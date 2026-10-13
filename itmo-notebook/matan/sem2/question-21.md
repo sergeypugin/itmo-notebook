@@ -34,11 +34,20 @@ $$
 >
 > Покажем, что $\displaystyle\int_0^{+\infty} \frac{|\sin x|}{x}dx = +\infty$.
 >
-> Разобьём $[0, +\infty)$ на $\pi$-отрезки. На каждом отрезке $[k\pi,(k+1)\pi]$ функция $|\sin x|$ неотрицательна, а $x \leq (k+1)\pi$, поэтому: $$ \int_{k\pi}^{(k+1)\pi} \frac{|\sin x|}{x}dx \geq \frac{1}{(k+1)\pi} \int_{k\pi}^{(k+1)\pi} |\sin x|dx $$
+> Разобьём $[0, +\infty)$ на $\pi$-отрезки. На каждом отрезке $[k\pi,(k+1)\pi]$ функция $|\sin x|$ неотрицательна, а $x \leq (k+1)\pi$, поэтому:
+> $$
+> \int_{k\pi}^{(k+1)\pi} \frac{|\sin x|}{x}dx \geq \frac{1}{(k+1)\pi} \int_{k\pi}^{(k+1)\pi} |\sin x|dx
+> $$
 >
-> Интеграл $\int_{k\pi}^{(k+1)\pi} |\sin x|dx$ равен $2$ для каждого $k$ . Значит: $$ \int_{k\pi}^{(k+1)\pi} \frac{|\sin x|}{x}dx \geq \frac{2}{(k+1)\pi} $$
+> Интеграл $\int_{k\pi}^{(k+1)\pi} |\sin x|dx$ равен $2$ для каждого $k$ . Значит:
+> $$
+> \int_{k\pi}^{(k+1)\pi} \frac{|\sin x|}{x}dx \geq \frac{2}{(k+1)\pi}
+> $$
 >
-> Суммируя по $k = 1, 2, 3, \ldots$: $$ \int_{\pi}^{+\infty} \frac{|\sin x|}{x}dx = \sum_{k=1}^{\infty} \int_{k\pi}^{(k+1)\pi} \frac{|\sin x|}{x}dx \geq \sum_{k=1}^{\infty} \frac{2}{(k+1)\pi} = +\infty $$
+> Суммируя по $k = 1, 2, 3, \ldots$:
+> $$
+> \int_{\pi}^{+\infty} \frac{|\sin x|}{x}dx = \sum_{k=1}^{\infty} \int_{k\pi}^{(k+1)\pi} \frac{|\sin x|}{x}dx \geq \sum_{k=1}^{\infty} \frac{2}{(k+1)\pi} = +\infty
+> $$
 >
 > Ряд расходится как гармонический ряд. Следовательно, интеграл Дирихле не сходится абсолютно.
 

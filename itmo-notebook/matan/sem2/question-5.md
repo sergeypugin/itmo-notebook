@@ -7,16 +7,28 @@ links:
 ## Интеграл от рациональной функции cos x и sin x
 
 Рассматривается интеграл
-$$ \int R(\cos x, \sin x) dx,$$
+$$
+\int R(\cos x, \sin x) dx,
+$$
 где
-$$ R(u, v) = \frac{P(u, v)}{Q(u, v)} $$
+$$
+R(u, v) = \frac{P(u, v)}{Q(u, v)}
+$$
 — рациональная функция от $u$, $v$ ($P$ и $Q$ — многочлены от $u$, $v$).
 
 ### Случай 1. Один из $P$, $Q$ чётный по $\sin x$, другой нечётный — подстановка $t = \cos x$
 
 НУО $P$ - нечётный, а $Q$ - нечётный. $R$ можно представить в виде
-$$ R(\cos x, \sin x) = \frac{P(\cos x, \sin x)}{Q(\cos x, \sin x)}=\frac{M(\cos x, \sin^2 x)\cdot \sin x}{N(\cos x, \sin^2 x)}, $$где $P(\cos x, \sin x) = M(\cos x, \sin^2 x)\cdot \sin x$, а $Q=N$. Подстановка $t = \cos x$ приводит интеграл к виду
-$$ \int R(\cos x, \sin x) dx =\int \frac{M(t, 1 - t^2)}{N(t, 1 - t^2)} d(-\cos x)=$$$$  = -\int \frac{M(t, 1 - t^2)}{N(t, 1 - t^2)} dt = \int R(t) dt, $$
+$$
+R(\cos x, \sin x) = \frac{P(\cos x, \sin x)}{Q(\cos x, \sin x)}=\frac{M(\cos x, \sin^2 x)\cdot \sin x}{N(\cos x, \sin^2 x)},
+$$
+где $P(\cos x, \sin x) = M(\cos x, \sin^2 x)\cdot \sin x$, а $Q=N$. Подстановка $t = \cos x$ приводит интеграл к виду
+$$
+\int R(\cos x, \sin x) dx =\int \frac{M(t, 1 - t^2)}{N(t, 1 - t^2)} d(-\cos x)=
+$$
+$$
+= -\int \frac{M(t, 1 - t^2)}{N(t, 1 - t^2)} dt = \int R(t) dt,
+$$
 где $R(t)$ — рациональная функция от $t$.
 
 ---
@@ -33,9 +45,13 @@ $$ \int R(\cos x, \sin x) dx =\int \frac{M(t, 1 - t^2)}{N(t, 1 - t^2)} d(-\cos x
 
 Если $P$ и $Q$ оба не меняются при замене $\cos x,\sin x$ на $-\cos x,-\sin x$ или оба меняют знак, то интеграл рационализируется подстановкой $t = \tg x$ (или $t = \ctg x$).
 При $t = \tg x$:
-$$ \sin^2 x = \frac{t^2}{1 + t^2}, \qquad dx = \frac{dt}{1 + t^2}. $$
+$$
+\sin^2 x = \frac{t^2}{1 + t^2}, \qquad dx = \frac{dt}{1 + t^2}.
+$$
 Интеграл принимает вид
-$$ \int \frac{M\left(t, \dfrac{t^2}{1+t^2}\right)}{N\left(t, \dfrac{t^2}{1+t^2}\right)(1 + t^2)} dt = \int R(t) dt, $$
+$$
+\int \frac{M\left(t, \dfrac{t^2}{1+t^2}\right)}{N\left(t, \dfrac{t^2}{1+t^2}\right)(1 + t^2)} dt = \int R(t) dt,
+$$
 где $R(t)$ — рациональная функция от $t$.
 
 ---
@@ -44,11 +60,15 @@ $$ \int \frac{M\left(t, \dfrac{t^2}{1+t^2}\right)}{N\left(t, \dfrac{t^2}{1+t^2}\
 
 Для **любой** рациональной функции $R(\cos x,\sin x)$ подстановка
 
-$$ t = \tg \frac{x}{2} $$
+$$
+t = \tg \frac{x}{2}
+$$
 
 рационализирует интеграл. При этом:
 
-$$ \cos x = \frac{1 - t^2}{1 + t^2}, \qquad \sin x = \frac{2t}{1 + t^2}, \qquad dx = \frac{2dt}{1 + t^2}. $$
+$$
+\cos x = \frac{1 - t^2}{1 + t^2}, \qquad \sin x = \frac{2t}{1 + t^2}, \qquad dx = \frac{2dt}{1 + t^2}.
+$$
 
 > Случаи 1–3 предпочтительнее использовать там, где они применимы: подстановки в них проще, а возникающие рациональные функции в итоге ниже степенью.
 
@@ -59,10 +79,21 @@ $$ \cos x = \frac{1 - t^2}{1 + t^2}, \qquad \sin x = \frac{2t}{1 + t^2}, \qquad 
 ### Определение и интегрирование
 
 Функция
-$$ T_n(x) = \frac{a_0}{2} + \sum_{k=1}^{n} \bigl(a_k \cos kx + b_k \sin kx\bigr) $$
+$$
+T_n(x) = \frac{a_0}{2} + \sum_{k=1}^{n} \bigl(a_k \cos kx + b_k \sin kx\bigr)
+$$
 называется **тригонометрическим полиномом порядка** $n$. Её интегрирование элементарно:
-$$ \int T_n(x) dx = \frac{a_0}{2} x + \sum_{k=1}^{n} \frac{1}{k}\bigl(a_k \sin kx - b_k \cos kx\bigr) + C. $$
+$$
+\int T_n(x) dx = \frac{a_0}{2} x + \sum_{k=1}^{n} \frac{1}{k}\bigl(a_k \sin kx - b_k \cos kx\bigr) + C.
+$$
 Вспомогательные формулы произведений на случай интегрирования произведения косинусов и синусов с разными углами:
-$$ \sin \alpha x \sin \beta x = \frac{1}{2}\bigl(\cos(\alpha - \beta)x - \cos(\alpha + \beta)x\bigr), $$
-$$ \sin \alpha x \cos \beta x = \frac{1}{2}\bigl(\sin(\alpha - \beta)x + \sin(\alpha + \beta)x\bigr), $$
-$$ \cos \alpha x \cos \beta x = \frac{1}{2}\bigl(\cos(\alpha - \beta)x + \cos(\alpha + \beta)x\bigr). $$).
+$$
+\sin \alpha x \sin \beta x = \frac{1}{2}\bigl(\cos(\alpha - \beta)x - \cos(\alpha + \beta)x\bigr),
+$$
+$$
+\sin \alpha x \cos \beta x = \frac{1}{2}\bigl(\sin(\alpha - \beta)x + \sin(\alpha + \beta)x\bigr),
+$$
+$$
+\cos \alpha x \cos \beta x = \frac{1}{2}\bigl(\cos(\alpha - \beta)x + \cos(\alpha + \beta)x\bigr).
+$$
+).

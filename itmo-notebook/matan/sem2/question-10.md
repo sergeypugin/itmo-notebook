@@ -47,9 +47,18 @@ $$
 
 Теорема. Следующие утверждения равносильны:
 
-1. $$f \in R[a, b]$$
-2. $$\lim\limits_{\lambda(\tau) \to 0} \sum\limits_{i=1}^n \omega(f, \Delta_i) \Delta x_i = 0$$
-3. $$\forall \varepsilon > 0 \ \exists \tau: \ \sum\limits_{i=1}^n \omega(f, \Delta_i) \Delta x_i < \varepsilon$$
+1.
+$$
+f \in R[a, b]
+$$
+2.
+$$
+\lim\limits_{\lambda(\tau) \to 0} \sum\limits_{i=1}^n \omega(f, \Delta_i) \Delta x_i = 0
+$$
+3.
+$$
+\forall \varepsilon > 0 \ \exists \tau: \ \sum\limits_{i=1}^n \omega(f, \Delta_i) \Delta x_i < \varepsilon
+$$
 
 >Доказательство немедленно следует из $S_\tau - s_\tau = \sum \omega(f, \Delta_i) \Delta x_i$.
 
@@ -60,7 +69,9 @@ $$
 ### Интегрируемость непрерывной функции
 
 ### Теорема
-$$f \in C[a, b] \ \Rightarrow \ f \in R[a, b]$$
+$$
+f \in C[a, b] \ \Rightarrow \ f \in R[a, b]
+$$
 
 ### Доказательство
 

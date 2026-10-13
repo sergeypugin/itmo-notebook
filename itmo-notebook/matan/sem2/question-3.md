@@ -26,9 +26,16 @@ $$
 Ax+B = A\!\left(x+\tfrac{p}{2}\right)+\!\left(B-\tfrac{Ap}{2}\right).
 $$
 Первое слагаемое даёт логарифм (заносим $x+\tfrac{p}{2}$ под $dx$), второе — арктангенс:
-$$\int \frac{A(x+\frac{p}{2})}{(x+\frac{p}{2})^2+a^2}dx = \frac{A}{2}\ln\left((x+\frac{p}{2})^2+a^2\right) + C$$
-$$\int \frac{B - \frac{Ap}{2}}{(x+\frac{p}{2})^2+a^2}dx = \frac{B - \frac{Ap}{2}}{a}\,\arctan\frac{x+\frac{p}{2}}{a} + C$$
-**Итоговая формула:**  $$\int \frac{Ax+B}{x^2+px+q}dx = \frac{A}{2}\ln(x^2+px+q) + \frac{2B-Ap}{\sqrt{4q-p^2}}\,\arctan\frac{2x+p}{\sqrt{4q-p^2}} + C$$
+$$
+\int \frac{A(x+\frac{p}{2})}{(x+\frac{p}{2})^2+a^2}dx = \frac{A}{2}\ln\left((x+\frac{p}{2})^2+a^2\right) + C
+$$
+$$
+\int \frac{B - \frac{Ap}{2}}{(x+\frac{p}{2})^2+a^2}dx = \frac{B - \frac{Ap}{2}}{a}\,\arctan\frac{x+\frac{p}{2}}{a} + C
+$$
+**Итоговая формула:**
+$$
+\int \frac{Ax+B}{x^2+px+q}dx = \frac{A}{2}\ln(x^2+px+q) + \frac{2B-Ap}{\sqrt{4q-p^2}}\,\arctan\frac{2x+p}{\sqrt{4q-p^2}} + C
+$$
 #### Тип 4: $\dfrac{Ax+B}{(x^2+px+q)^n}$, $n \geq 2$, $p^2-4q<0$
 
 Выделяем полный квадрат и делаем замену $t = x+\tfrac{p}{2}$, $dt = dx$, $a^2 = q-\tfrac{p^2}{4}>0$. Тогда $(x^2+px+q) = t^2+a^2$, а числитель:

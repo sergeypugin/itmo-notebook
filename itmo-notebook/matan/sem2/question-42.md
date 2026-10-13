@@ -47,7 +47,9 @@ $$
 \xi_1, \xi_2, \dots, \xi_n, \dots
 $$
 Каждому корню соответствует собственная функция тригонометрической системы:
-$$X_n(x) = \sin\left(\frac{\xi_n x}{l}\right) \quad \forall n \in \mathbb{N}$$
+$$
+X_n(x) = \sin\left(\frac{\xi_n x}{l}\right) \quad \forall n \in \mathbb{N}
+$$
 Частоты этой системы не являются целыми числами, в отличие от классического ряда Фурье.
 
 ---

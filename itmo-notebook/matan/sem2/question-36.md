@@ -26,12 +26,16 @@ $$
 ## 2. Равномерная сходимость ($S_n(x) \rightrightarrows S(x)$)
 
 Ряд называется **равномерно сходящимся** на множестве $D$ к функции $S(x)$, если номер $n_0(\varepsilon)$ зависит *только* от $\varepsilon$ и является **единым для всех точек** $x \in D$:
-$$ \forall \varepsilon > 0 \ \exists n_0(\varepsilon) \in \mathbb{N} : \forall n > n_0 \ \forall x \in D \implies |S_n(x) - S(x)| < \varepsilon $$
+$$
+\forall \varepsilon > 0 \ \exists n_0(\varepsilon) \in \mathbb{N} : \forall n > n_0 \ \forall x \in D \implies |S_n(x) - S(x)| < \varepsilon
+$$
 > **Отличие от поточечной сходимости:** В случае поточечной сходимости номер $k_0$ зависит как от $\varepsilon$, так и от выбора точки $x$. При равномерной сходимости $k_0$ зависит только от $\varepsilon$ и является **единым сразу для всех точек** $x \in D$.
 
 **Критерий через остаток:**
 Ряд сходится равномерно $\iff$ его $n$-й остаток $R_n(x) = \sum_{k=n+1}^\infty f_k(x)$ равномерно стремится к нулю:
-$$ \lim_{n \to \infty} \sup_{x \in D} |R_n(x)| = 0 $$
+$$
+\lim_{n \to \infty} \sup_{x \in D} |R_n(x)| = 0
+$$
 ---
 
 ## 3. Критерии и признаки равномерной сходимости
@@ -39,9 +43,13 @@ $$ \lim_{n \to \infty} \sup_{x \in D} |R_n(x)| = 0 $$
 ### Критерий Коши
 
 Ряд $\sum_{k=1}^\infty f_k(x)$ сходится равномерно на $D$ $\iff$ выполняется условие фундаментальности:
-$$ \forall \varepsilon > 0 \ \exists n_0 \in \mathbb{N} : \forall n > n_0 \ \forall p \in \mathbb{N} \ \forall x \in D \implies \left| \sum_{k=n+1}^{n+p} f_k(x) \right| < \varepsilon $$
+$$
+\forall \varepsilon > 0 \ \exists n_0 \in \mathbb{N} : \forall n > n_0 \ \forall p \in \mathbb{N} \ \forall x \in D \implies \left| \sum_{k=n+1}^{n+p} f_k(x) \right| < \varepsilon
+$$
 >Эквивалентная формулировка для последовательности функций $S_n(x)$
-> $$\forall \varepsilon > 0 \ \exists N \in \mathbb{N} : \forall n, m \ge N \  \forall x \in D: \ \left| S_n(x) - S_m(x) \right| < \varepsilon$$
+> $$
+> \forall \varepsilon > 0 \ \exists N \in \mathbb{N} : \forall n, m \ge N \  \forall x \in D: \ \left| S_n(x) - S_m(x) \right| < \varepsilon
+> $$
 >О том, почему она эквивалентна, можно прочитать в [доказательстве Критерия Коши (вопрос 24)](matan/sem2/question-24). Но идея в том, что $\sum_{k=n+1}^{n+p} f_k(x)=S_{n+p}(x) - S_n(x)$.
 #### Доказательство:
 
@@ -56,27 +64,35 @@ $$ \forall \varepsilon > 0 \ \exists n_0 \in \mathbb{N} : \forall n > n_0 \ \for
 	$$
 - **Достаточность ($\impliedby$):** Из условия Коши следует поточечная фундаментальность числовой последовательности $S_n(x)$ в каждой точке $x$ (ну т.е. мы переходим к формулировке из пояснения), а значит $\exists \lim_{n \to \infty} S_n(x) = S(x)$.
   В исходном неравенстве $|S_{n+p}(x) - S_n(x)| < \varepsilon$ устремим $p \to \infty$. Получаем:
-  $$ \forall n > n_0 \ \forall x \in D \implies |S(x) - S_n(x)| \le \varepsilon, $$
+  $$
+  \forall n > n_0 \ \forall x \in D \implies |S(x) - S_n(x)| \le \varepsilon,
+  $$
   что по определению означает равномерную сходимость $S_n(x) \rightrightarrows S(x)$.
 
 >[!important] Хз нужны ли доказательства для последних двух признаков и сами эти признаки. Мы на лекциях их не доказывали. Очень жаль людей, кому попалось это гробище
 ### Признак Вейерштрасса
 
 Пусть для ряда $\sum_{k=1}^\infty f_k(x)$ на множестве $D$ существует сходящийся числовой ряд $\sum_{k=1}^\infty a_k$, где $a_k \ge 0$, такой, что:
-$$ |f_k(x)| \le a_k, \quad \forall x \in D $$
+$$
+|f_k(x)| \le a_k, \quad \forall x \in D
+$$
 Тогда функциональный ряд сходится **равномерно и абсолютно** на $D$.
 
 #### Доказательство:
 Фиксируем $\varepsilon > 0$. Из сходимости $\sum a_k$ по критерию Коши $\exists n_0: \forall n > n_0 \ \forall p \in \mathbb{N} \implies \sum_{k=n+1}^{n+p} a_k < \varepsilon$.
 Тогда по неравенству треугольника для функционального ряда сразу для всех $x \in D$:
-$$ \left| \sum_{k=n+1}^{n+p} f_k(x) \right| \le \sum_{k=n+1}^{n+p} |f_k(x)| \le \sum_{k=n+1}^{n+p} a_k < \varepsilon. $$
+$$
+\left| \sum_{k=n+1}^{n+p} f_k(x) \right| \le \sum_{k=n+1}^{n+p} |f_k(x)| \le \sum_{k=n+1}^{n+p} a_k < \varepsilon.
+$$
 По критерию Коши функциональный ряд сходится равномерно на $D$.
 
 ### Признак Дирихле
 
 Ряд $\sum_{k=1}^\infty a_k(x)b_k(x)$ сходится равномерно на $D$, если:
 1. Частичные суммы $A_n(x) = \sum_{k=1}^n a_k(x)$ равномерно ограничены:
-	$$\exists M > 0 : |A_n(x)| \le M \quad \forall n \in \mathbb{N}, \forall x \in D$$
+	$$
+	\exists M > 0 : |A_n(x)| \le M \quad \forall n \in \mathbb{N}, \forall x \in D
+	$$
 2. Функции $b_k(x)$ при каждом $x \in D$ монотонны по $k$ и равномерно стремятся к нулю: $b_k(x) \rightrightarrows 0$ на $D$.
 
 ### Признак Абеля

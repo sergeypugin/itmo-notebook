@@ -10,14 +10,20 @@ links:
 
 **Функциональным рядом** называется ряд вида
 
-$$ \sum_{n=1}^{\infty} f_n(x), $$
+$$
+\sum_{n=1}^{\infty} f_n(x),
+$$
 
 где $f_n(x)$ — функции, определённые на некотором множестве $X \subseteq \mathbb{R}$.
 
 Различают три вида сходимости:
 
   - "**Поточечная.** Ряд сходится в точке $x_0$, если числовой ряд $\sum f_n(x_0)$ сходится."
-  - "**Равномерная.** Частичные суммы $S_N(x) \rightrightarrows S(x)$ на $X$, то есть $N$ не зависит от $x$: $$ \forall \varepsilon > 0\ \exists N\ \forall n \geq N\ \forall x \in X : |S_n(x) - S(x)| < \varepsilon. $$"
+  - "**Равномерная.** Частичные суммы $S_N(x) \rightrightarrows S(x)$ на $X$, то есть $N$ не зависит от $x$:
+  $$
+  \forall \varepsilon > 0\ \exists N\ \forall n \geq N\ \forall x \in X : |S_n(x) - S(x)| < \varepsilon.
+  $$
+  "
   - "**Абсолютная.** Ряд $\sum |f_n(x)|$ сходится."
 
 > Равномерная сходимость сохраняет непрерывность членов, допускает почленное интегрирование и дифференцирование из свойств функциональных рядов.
@@ -29,13 +35,17 @@ $$ \sum_{n=1}^{\infty} f_n(x), $$
 
 **Степенной ряд** с центром $a$ — это функциональный ряд вида
 
-$$ \sum_{n=0}^{\infty} c_n (x - a)^n = c_0 + c_1(x-a) + c_2(x-a)^2 + \cdots $$
+$$
+\sum_{n=0}^{\infty} c_n (x - a)^n = c_0 + c_1(x-a) + c_2(x-a)^2 + \cdots
+$$
 
 Замена $t = x - a$ сводит его к ряду $\sum c_n t^n$, центрированному в нуле.
 
 Примером степенного ряда может послужить **Ряд Тейлора** функции $f$ в точке $a$ — это степенной ряд с коэффициентами
 
-$$ c_n = \frac{f^{(n)}(a)}{n!}, \quad\text{то есть}\quad f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^n. $$
+$$
+c_n = \frac{f^{(n)}(a)}{n!}, \quad\text{то есть}\quad f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}(x-a)^n.
+$$
 
 При $a = 0$ ряд называется **рядом Маклорена**.
 
@@ -55,7 +65,9 @@ $\displaystyle \frac{1}{1-x} = \sum_{n=0}^{\infty} x^n$, $\quad R = 1$
 
 **Ряд Лорана** в точке $a$ — это функциональный ряд, допускающий отрицательные степени:
 
-$$ \sum_{n=-\infty}^{+\infty} c_n (z - a)^n = \sum_{n=0}^{\infty} c_n (z-a)^n + \sum_{n=1}^{\infty} \frac{c_{-n}}{(z-a)^n}. $$
+$$
+\sum_{n=-\infty}^{+\infty} c_n (z - a)^n = \sum_{n=0}^{\infty} c_n (z-a)^n + \sum_{n=1}^{\infty} \frac{c_{-n}}{(z-a)^n}.
+$$
 
 Первая сумма — аналитическая часть, вторая — сингулярная часть.
 
@@ -65,7 +77,9 @@ $$ \sum_{n=-\infty}^{+\infty} c_n (z - a)^n = \sum_{n=0}^{\infty} c_n (z-a)^n + 
 
 Для $\ctg x$ в окрестности $x = 0$:
 
-$$ \ctg x = \frac{1}{x} - \frac{x}{3} - \frac{x^3}{45} - \cdots $$
+$$
+\ctg x = \frac{1}{x} - \frac{x}{3} - \frac{x^3}{45} - \cdots
+$$
 
 ---
 
@@ -75,7 +89,9 @@ $$ \ctg x = \frac{1}{x} - \frac{x}{3} - \frac{x^3}{45} - \cdots $$
 
 **Ряд Пюизо** — обобщение степенного ряда, в котором показатели степени могут быть дробными рациональными:
 
-$$ \sum_{k=k_0}^{\infty} c_k (x - a)^{k/n}, $$
+$$
+\sum_{k=k_0}^{\infty} c_k (x - a)^{k/n},
+$$
 
 где:
 
@@ -87,7 +103,9 @@ $$ \sum_{k=k_0}^{\infty} c_k (x - a)^{k/n}, $$
 
 Разложение $\sqrt{x+x^2}$ в окрестности $x = 0$ ($2$ не делит $k$):
 
-$$ \sqrt{x+x^2} = x^\frac{1}{2} + \frac{1}{2}x^\frac{3}{2} - \frac{1}{8}x^\frac{5}{2} + \cdots = \sum_{k=1, 2 \nmid k}^{\infty} c_k x^{k/2}. $$
+$$
+\sqrt{x+x^2} = x^\frac{1}{2} + \frac{1}{2}x^\frac{3}{2} - \frac{1}{8}x^\frac{5}{2} + \cdots = \sum_{k=1, 2 \nmid k}^{\infty} c_k x^{k/2}.
+$$
 
 ---
 
@@ -99,13 +117,19 @@ $$ \sqrt{x+x^2} = x^\frac{1}{2} + \frac{1}{2}x^\frac{3}{2} - \frac{1}{8}x^\frac{
 
 Пусть $f(x)$ — периодическая с периодом $2\pi$, интегрируемая на $[-l, l]$. Её **тригонометрический ряд Фурье**:
 
-$$ f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty} \bigl(a_n \cos(nx) + b_n \sin(nx)\bigr), $$
+$$
+f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty} \bigl(a_n \cos(nx) + b_n \sin(nx)\bigr),
+$$
 
 где коэффициенты вычисляются по формулам:
 
-$$ a_n = \frac{1}{l}\int_{-l}^{l} f(x)\cos(nx) dx, \quad n \in \mathbb{N} \cup \{0\}$$
+$$
+a_n = \frac{1}{l}\int_{-l}^{l} f(x)\cos(nx) dx, \quad n \in \mathbb{N} \cup \{0\}
+$$
 
-$$ b_n = \frac{1}{l}\int_{-l}^{l} f(x)\sin(nx) dx, \quad n \in \mathbb{N}$$
+$$
+b_n = \frac{1}{l}\int_{-l}^{l} f(x)\sin(nx) dx, \quad n \in \mathbb{N}
+$$
 
 > Если $f$ чётная, то $b_n = 0$; если нечётная, то $a_n = 0$.
 
@@ -113,12 +137,18 @@ $$ b_n = \frac{1}{l}\int_{-l}^{l} f(x)\sin(nx) dx, \quad n \in \mathbb{N}$$
 
 Используя формулу Эйлера $e^{i\theta} = \cos\theta + i\sin\theta$, ряд записывается компактнее:
 
-$$ f(x) = \sum_{n=-\infty}^{+\infty} c_n e^{inx}, $$
+$$
+f(x) = \sum_{n=-\infty}^{+\infty} c_n e^{inx},
+$$
 
 где
 
-$$ c_n = \frac{1}{2l}\int_{-l}^{l} f(x) e^{-inx} dx. $$
+$$
+c_n = \frac{1}{2l}\int_{-l}^{l} f(x) e^{-inx} dx.
+$$
 
 Связь с вещественными коэффициентами:
 
-$$ c_0 = \frac{a_0}{2}, \qquad c_n = \frac{a_n - ib_n}{2}, \qquad c_{-n} = \frac{a_n + ib_n}{2}, \quad n \geq 1. $$
+$$
+c_0 = \frac{a_0}{2}, \qquad c_n = \frac{a_n - ib_n}{2}, \qquad c_{-n} = \frac{a_n + ib_n}{2}, \quad n \geq 1.
+$$
