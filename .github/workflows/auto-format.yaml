@@ -23,19 +23,15 @@ jobs:
         with:
           node-version: lts/*
 
-      # 1. Форматируем синтаксис HTML, CSS и JS как в языковом сервере
-      - name: Format code structure
-        run: npx js-beautify -r --indent-size 2 "**/*.html" "**/*.css" "**/*.js"
-
-      # 2. По `.editorconfig` исправляем стиль
+      # По `.editorconfig` исправляем стиль
       - name: Fix EditorConfig rules
         run: npx eclint fix "**/*"
 
-      # 3. Откатываем правки в файлах воркфлоу, т.к. им не разрешен доступ на перезапись воркфлоу
+      # Откатываем правки в файлах воркфлоу, т.к. им не разрешен доступ на перезапись воркфлоу
       - name: Revert workflow modifications
         run: git checkout -- .github/workflows/ || true
 
-      # 4. Автоматически коммитим изменения
+      # Автоматически коммитим изменения
       - name: Auto-commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
