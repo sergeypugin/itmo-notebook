@@ -12,6 +12,14 @@ BLUE_BIBLE_URL = "https://se.ifmo.ru/documents/10180/38002/%D0%92%D0%B2%D0%B5%D0
 WIKILINK = re.compile(r"!?\[\[([^\]]*)\]\]", re.DOTALL)
 IGNORED_DIRS = {".obsidian", "_ignore", ".git", "node_modules"}
 
+# Media extensions that should remain as markdown images (not transcluded)
+MEDIA_EXTS = {
+    ".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg",
+    ".mp4", ".webm", ".mov", ".avi", ".mkv",
+    ".mp3", ".wav", ".ogg", ".flac",
+    ".pdf",
+}
+
 
 class LinkConverter:
     def __init__(self, root_dir):
@@ -86,6 +94,13 @@ class LinkConverter:
             return None, anchor, "ambiguous in current directory", same_directory
         return None, anchor, "ambiguous target", matches
 
+    def _format_destination(self, url: str) -> str:
+        """Wrap destination in angle brackets if it contains spaces."""
+        return f"<{url}>" if " " in url else url
+
+    def _is_media(self, path: Path) -> bool:
+        return path.suffix.lower() in MEDIA_EXTS
+
     def convert_text(self, text, current_file):
         unresolved = []
 
@@ -104,16 +119,26 @@ class LinkConverter:
                 unresolved.append((line_number, match.group(0), reason, candidates))
                 return match.group(0)
 
+            is_embed = match.group(0).startswith("!")
             url_path = resolved.as_posix()
             display_name = resolved.stem if resolved.suffix.lower() == ".md" else resolved.name
-            if resolved.suffix.lower() == ".md":
-                url_path = url_path[:-3]
-            url = quote(url_path, safe="/#") + anchor
 
-            if match.group(0).startswith("!"):
-                if alias and alias.isdigit():
+            # Determine if target is a note (.md) or media
+            is_note = resolved.suffix.lower() == ".md"
+
+            if is_note:
+                url_path = url_path[:-3]  # strip .md
+            url = quote(url_path, safe="/#") + anchor
+            url = self._format_destination(url)
+
+            if is_embed:
+                # Embed: ![alt](path) - will be transcluded by transformer for notes,
+                # rendered as image for media
+                if alias and alias.isdigit() and not is_note:
+                    # Width hint for media: ![alt|WIDTH](path) -> we'll keep as-is for now
+                    # Could emit HTML <img width="WIDTH"> but markdown doesn't support width natively
                     return f"![{display_name}|{alias}]({url})"
-                return f"![{alias or display_name}]({url})"
+                return f"![{alias or display_name}]({url})\n"
             return f"[{alias or display_name}]({url})"
 
         return WIKILINK.sub(replace_link, text), unresolved
@@ -163,7 +188,7 @@ class LinkConverter:
 
         if not check_only:
             for path, converted in updates.items():
-                path.write_text(converted, encoding="utf-8")
+                path.write_text(converted, encoding="utf-8", newline="\n")
             print(f"Link conversion passed: updated {len(updates)} file(s)")
         else:
             print("Link check passed: no wikilinks found")
