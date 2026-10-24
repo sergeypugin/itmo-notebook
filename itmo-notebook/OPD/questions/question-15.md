@@ -34,8 +34,10 @@ author: Luisa
 Для работы с внешними устройствами используются команды:
 
 ![io-commands.png](OPD/questions/Attachments/io-commands.png)
+
 ### Основные устройства ввода-вывода БЭВМ
 
 В состав комплекса БЭВМ входят:
 
 ![io-controller-register-map.png|679](<OPD/questions/Attachments/io-controller-register-map.png>)
+

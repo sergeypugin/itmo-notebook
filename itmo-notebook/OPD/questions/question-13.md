@@ -16,6 +16,7 @@ author: Luisa
 **RET** завершает выполнение подпрограммы и возвращает управление в точку вызова.
 ### Цикл исполнения CALL
 ![call-execution-cycle.png](<OPD/questions/Attachments/call-execution-cycle.png>)
+
 ### Цикл исполнения RET
 ![return-execution-cycle.png](<OPD/questions/Attachments/return-execution-cycle.png>)
 

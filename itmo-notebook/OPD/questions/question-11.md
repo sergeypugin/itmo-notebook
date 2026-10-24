@@ -25,6 +25,7 @@ author: Luisa
 ## Цикл выборки адреса и операнда зависит от используемого режима адресации:
 
 ![add-addressing-modes.png](<OPD/questions/Attachments/add-addressing-modes.png>)
+
 >AF (Address Fetch), OF (Operand Fetch), SXT (Sign eXTension)
 >
 >В прямой загрузке нет выборки операнда и адреса, т. к. операнд непосредственно содержится внутри команды.

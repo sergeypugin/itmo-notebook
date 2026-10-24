@@ -37,6 +37,7 @@ author: Luisa
 ## Циклы обмена (логика управления)
 
 ![io-diargam.png](OPD/questions/Attachments/io-diargam.png)
+
 #### Ввод
 1. Процессор выставляет адрес ВУ
 2. Активируется сигнал «чтение»

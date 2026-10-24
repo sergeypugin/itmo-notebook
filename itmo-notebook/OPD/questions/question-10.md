@@ -35,6 +35,7 @@ author: Luisa
 ![rol_asl.png](OPD/questions/Attachments/rol_asl.png)
 
 ![ror-ars.png](OPD/questions/Attachments/ror-ars.png)
+
 ## Цикл выборки команды
 
 Перед выполнением команды процессор должен считать её из памяти и определить её тип. В БЭВМ цикл выборки команды описывается следующей последовательностью микрокоманд:
