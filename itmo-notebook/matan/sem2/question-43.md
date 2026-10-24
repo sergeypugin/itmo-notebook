@@ -47,7 +47,8 @@ $$
 $$
 \left| \int_{\delta_1}^{\delta_2} f(x)e^{i\lambda x} \, dx - \int_{\delta_1}^{\delta_2} g(x)e^{i\lambda x} \, dx \right| \leq
 $$
-$$\int_{\delta_1}^{\delta_2} |f(x) - g(x)| \cdot |e^{i\lambda x}| \, dx
+$$
+\int_{\delta_1}^{\delta_2} |f(x) - g(x)| \cdot |e^{i\lambda x}| \, dx
 = \int_{\delta_1}^{\delta_2} (f(x) - g(x)) \, dx < \frac{\varepsilon}{4}
 $$
 

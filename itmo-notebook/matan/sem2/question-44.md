@@ -66,7 +66,8 @@ $$
 S_n(x) - \frac{f(x+0) + f(x-0)}{2} =
 $$
 $$
-=\frac{1}{2\pi} \int_{0}^{\pi} \left[ \frac{f(x-t) - f(x-0)}{\sin \frac{t}{2}} + \frac{f(x+t) - f(x+0)}{\sin \frac{t}{2}} \right] \cdot $$
+=\frac{1}{2\pi} \int_{0}^{\pi} \left[ \frac{f(x-t) - f(x-0)}{\sin \frac{t}{2}} + \frac{f(x+t) - f(x+0)}{\sin \frac{t}{2}} \right] \cdot
+$$
 $$
 \cdot \sin\left(n + \frac{1}{2}\right)t \, dt
 $$

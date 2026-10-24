@@ -12,7 +12,8 @@ links:
 $$
 Q(x)=(x-a_1)^{k_1}\cdots(x-a_r)^{k_r}\cdot(x^2+p_1x+q_1)^{\ell_1}\cdots
 $$
-$$\cdots(x^2+p_sx+q_s)^{\ell_s},
+$$
+\cdots(x^2+p_sx+q_s)^{\ell_s},
 $$
 где $p_j^2-4q_j<0$. Тогда существует единственное представление:
 $$
