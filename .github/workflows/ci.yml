@@ -33,6 +33,9 @@ jobs:
       - name: Format math
         run: python scripts/check_math.py
 
+      - name: Ensure blank line after embeds
+        run: python scripts/ensure_blank_after_embed.py
+
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
