@@ -8,7 +8,7 @@ author: Luisa
 
 В БЭВМ обмен информацией между процессором и внешними устройствами (ВУ) осуществляется через **контроллеры устройств ввода-вывода**.
 
-![io-controller-structure.png](OPD/questions/Attachments/Pasted%20image%2020260623213312.png)
+![io-controller-structure.png](<OPD/questions/Attachments/io-controller-structure.png>)
 
 Контроллер содержит:
 
@@ -38,4 +38,4 @@ author: Luisa
 
 В состав комплекса БЭВМ входят:
 
-![io-controller-register-map.png|679](OPD/questions/Attachments/Pasted%20image%2020260623213516.png)
+![io-controller-register-map.png|679](<OPD/questions/Attachments/io-controller-register-map.png>)

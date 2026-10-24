@@ -24,7 +24,7 @@ author: Luisa
 - **Прямая загрузка операнда** — операнд содержится непосредственно в команде.
 ## Цикл выборки адреса и операнда зависит от используемого режима адресации:
 
-![add-addressing-modes.png](OPD/questions/Attachments/Pasted%20image%2020260623200851.png)
+![add-addressing-modes.png](<OPD/questions/Attachments/add-addressing-modes.png>)
 >AF (Address Fetch), OF (Operand Fetch), SXT (Sign eXTension)
 >
 >В прямой загрузке нет выборки операнда и адреса, т. к. операнд непосредственно содержится внутри команды.

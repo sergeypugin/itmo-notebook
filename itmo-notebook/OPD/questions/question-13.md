@@ -15,9 +15,9 @@ author: Luisa
 **CALL** выполняет переход к подпрограмме и сохраняет адрес возврата.
 **RET** завершает выполнение подпрограммы и возвращает управление в точку вызова.
 ### Цикл исполнения CALL
-![call-execution-cycle.png](OPD/questions/Attachments/Pasted%20image%2020260623205715.png)
+![call-execution-cycle.png](<OPD/questions/Attachments/call-execution-cycle.png>)
 ### Цикл исполнения RET
-![return-execution-cycle.png](OPD/questions/Attachments/Pasted%20image%2020260623205728.png)
+![return-execution-cycle.png](<OPD/questions/Attachments/return-execution-cycle.png>)
 
  Параметры в подпрограмму могут передаваться несколькими способами:
 
@@ -27,13 +27,13 @@ author: Luisa
 ## Стек
 
 Стек — структура данных типа LIFO (*Last In — First Out*).
-![call-subroutine-stack.png](OPD/questions/Attachments/Pasted%20image%2020260623205619.png)
+![call-subroutine-stack.png](<OPD/questions/Attachments/call-subroutine-stack.png>)
 
 В БЭВМ стек организуется программно в области оперативной памяти. Для работы со стеком используется регистр **SP (Stack Pointer)**, содержащий адрес вершины стека. Стек находится по адресу 7FF и при при помещении данных в стек указатель уменьшается, при извлечении — увеличивается.
 
 Основные операции:
 
-![stack-push-pop.png](OPD/questions/Attachments/Pasted%20image%2020260623205639.png)
+![stack-push-pop.png](<OPD/questions/Attachments/stack-push-pop.png>)
 
 ---
 ## Позиционно-независимый код (PIC)

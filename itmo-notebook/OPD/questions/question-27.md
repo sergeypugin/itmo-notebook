@@ -20,7 +20,7 @@ author: Luisa
 2. **Поле данных**.
 3. **ECC (Error Correction Code)** — код обнаружения и исправления ошибок.
 
-![hard-disk-layout.png](OPD/questions/Attachments/Pasted%20image%2020260625153212.png)
+![hard-disk-layout.png](<OPD/questions/Attachments/hard-disk-layout.png>)
 
 Чтение и запись выполняются магнитными головками. Для доступа к данным необходимо:
 
@@ -37,7 +37,7 @@ author: Luisa
 
 Магнитная лента представляет собой носитель, на котором данные записываются последовательно вдоль дорожек.
 
-![magnetic-tape-drive.png](OPD/questions/Attachments/Pasted%20image%2020260625153151.png)
+![magnetic-tape-drive.png](<OPD/questions/Attachments/magnetic-tape-drive.png>)
 
 Главным преимуществом ленточных накопителей является очень низкая стоимость хранения больших объёмов информации. Поэтому они широко используются для резервного копирования и архивного хранения данных.
 

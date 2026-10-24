@@ -25,7 +25,7 @@ author: Luisa
 ---
 ## Пирамида памяти
 
-![memory-hierarchy.png](OPD/questions/Attachments/Pasted%20image%2020260625160640.png)
+![memory-hierarchy.png](<OPD/questions/Attachments/memory-hierarchy.png>)
 
 По мере удаления от процессора:
 

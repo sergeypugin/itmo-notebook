@@ -346,4 +346,4 @@ links:
     $$
 
 
-![Exploding Brain.gif](matan/sem2/Attachments/Exploding%20Brain.gif)
+![Exploding Brain.gif](<matan/sem2/Attachments/Exploding Brain.gif>)

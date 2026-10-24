@@ -15,7 +15,7 @@ author: Luisa
 **2. Классификация компьютерных сетей**
 Сети классифицируются по нескольким основным признакам:
 
-![computer-network-classification.png](OPD/questions/Attachments/Pasted%20image%2020260625172322.png)
+![computer-network-classification.png](<OPD/questions/Attachments/computer-network-classification.png>)
 
 - По топологии (способу соединения узлов):
     - **Звезда:** все ЭВМ подключены к центральному серверу. Простота и дешевизна, но низкая живучесть.
