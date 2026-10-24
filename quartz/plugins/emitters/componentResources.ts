@@ -260,6 +260,11 @@ function addGlobalPageResources(ctx: BuildCtx, componentResources: ComponentReso
     `)
   }
 
+  // Correct search preview scroll position to target the first highlight.
+  // Must be pushed before the SPA router: production builds load the last script
+  // separately and rely on it dispatching the initial `nav` event.
+  componentResources.afterDOMLoaded.push(searchScrollScript)
+
   if (cfg.enableSPA) {
     componentResources.afterDOMLoaded.push(spaRouterScript)
   } else {
@@ -270,9 +275,6 @@ function addGlobalPageResources(ctx: BuildCtx, componentResources: ComponentReso
       document.dispatchEvent(event)
     `)
   }
-
-  // Correct search preview scroll position to target the first highlight
-  componentResources.afterDOMLoaded.push(searchScrollScript)
 }
 
 // This emitter should not update the `resources` parameter. If it does, partial
@@ -525,6 +527,6 @@ export const ComponentResources: QuartzEmitterPlugin = () => {
         content: postscript,
       })
     },
-    async *partialEmit() { },
+    async *partialEmit() {},
   }
 }
