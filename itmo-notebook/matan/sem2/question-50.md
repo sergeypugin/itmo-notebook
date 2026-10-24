@@ -53,14 +53,18 @@ $$
 
 **Ряд по $T_n$:**
 $$
-f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty} a_n T_n(x), \quad a_n = \frac{2}{\pi}\int_{-1}^{1} f(x)T_n(x)\frac{dx}{\sqrt{1-x^2}}=$$
-$$= \frac{2}{\pi}\int_0^\pi f(\cos\theta)\cos(n\theta)\,d\theta.
+f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty} a_n T_n(x), \quad a_n = \frac{2}{\pi}\int_{-1}^{1} f(x)T_n(x)\frac{dx}{\sqrt{1-x^2}}=
+$$
+$$
+= \frac{2}{\pi}\int_0^\pi f(\cos\theta)\cos(n\theta)\,d\theta.
 $$
 
 **Ряд по $U_n$:**
 $$
-f(x) = \sum_{n=0}^{\infty} b_n U_n(x), \quad b_n = \frac{2}{\pi}\int_{-1}^{1} f(x)U_n(x)\sqrt{1-x^2}\,dx = $$
-$$=\frac{2}{\pi}\int_0^\pi f(\cos\theta)\sin((n+1)\theta)\sin\theta\,d\theta.
+f(x) = \sum_{n=0}^{\infty} b_n U_n(x), \quad b_n = \frac{2}{\pi}\int_{-1}^{1} f(x)U_n(x)\sqrt{1-x^2}\,dx =
+$$
+$$
+=\frac{2}{\pi}\int_0^\pi f(\cos\theta)\sin((n+1)\theta)\sin\theta\,d\theta.
 $$
 
 Коэффициенты получаются умножением на соответствующий многочлен с весом и использованием ортогональности.
