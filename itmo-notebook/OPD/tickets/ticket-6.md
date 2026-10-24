@@ -1,3 +1,6 @@
+---
+title: Билет 6
+---
 [question-6](OPD/questions/question-6)
 
 ![question-6](OPD/questions/question-6)

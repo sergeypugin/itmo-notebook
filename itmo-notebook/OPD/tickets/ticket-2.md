@@ -1,3 +1,6 @@
+---
+title: Билет 2
+---
 [question-2](OPD/questions/question-2)
 
 ![question-2](OPD/questions/question-2)
