@@ -133,6 +133,12 @@ class Formatter:
 
 
 def main():
+    if [arg for arg in sys.argv[1:] if arg != "--check"]:
+        print("Использование: python scripts/check_math.py [--check]", file=sys.stderr)
+        return 2
+    check_only = "--check" in sys.argv[1:]
+
+    warnings = 0
     for path in sorted(CONTENT_ROOT.rglob("*.md")):
         if any(part in IGNORED_DIRS for part in path.relative_to(CONTENT_ROOT).parts):
             continue
@@ -143,9 +149,15 @@ def main():
 
         for warning in formatter.warnings:
             print(f"{path.relative_to(CONTENT_ROOT.parent)}: {warning}", file=sys.stderr)
-        if formatted != original:
+            warnings += 1
+        if not check_only and formatted != original:
             path.write_text(formatted, encoding="utf-8", newline="\n")
+
+    if check_only and warnings:
+        print(f"Проверка формул провалена: {warnings} ошибка(и).", file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

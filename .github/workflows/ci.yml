@@ -7,11 +7,20 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   format:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      revision: ${{ steps.revision.outputs.sha }}
     env:
       AUTO_FORMAT_TOKEN: ${{ secrets.AUTO_FORMAT_TOKEN }}
     steps:
@@ -40,12 +49,17 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: lts/*
+          cache: npm
+          cache-dependency-path: scripts/package-lock.json
+
+      - name: Install tooling
+        run: npm ci --prefix scripts
 
       - name: Apply EditorConfig rules
-        run: npx eclint fix "**/*"
+        run: ./scripts/node_modules/.bin/eclint fix "**/*"
 
       - name: Restore workflow files
-        run: git checkout -- .github/workflows/ || true
+        run: git checkout -- .github/workflows/
 
       - name: Require a write token when formatting changed files
         if: ${{ github.event_name == 'pull_request' && env.AUTO_FORMAT_TOKEN == '' }}
@@ -65,6 +79,13 @@ jobs:
           commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           branch: ${{ github.head_ref || github.ref_name }}
 
+      - name: Fail on unfixable math issues
+        run: python scripts/check_math.py --check
+
+      - name: Resolve checked-out revision
+        id: revision
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   build:
     needs: format
     if: github.event_name != 'pull_request'
@@ -75,12 +96,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ needs.format.outputs.revision }}
           fetch-depth: 0
 
       - uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -99,6 +121,46 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: public
+
+  build-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+
+      - name: Convert links
+        run: python scripts/convert_links.py apply-all
+
+      - name: Format math
+        run: python scripts/check_math.py
+
+      - name: Fail on unfixable math issues
+        run: python scripts/check_math.py --check
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install plugins
+        run: npx quartz plugin install
+
+      - name: Set baseUrl for GitHub Pages
+        run: |
+          sed -i "s|baseUrl:.*|baseUrl: ${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}|" quartz.config.yaml
+
+      - name: Build Quartz
+        run: npx quartz build -d itmo-notebook
 
   deploy:
     needs: build

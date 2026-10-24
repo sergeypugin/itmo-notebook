@@ -1,0 +1,8 @@
+{
+  "name": "itmo-notebook-scripts",
+  "private": true,
+  "description": "Инструменты проверки заметок, отдельно от зависимостей Quartz",
+  "devDependencies": {
+    "eclint": "2.8.1"
+  }
+}
