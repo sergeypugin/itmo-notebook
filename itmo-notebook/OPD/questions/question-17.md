@@ -55,4 +55,3 @@ author: Luisa
 
 Регистр состояния процессора:
 ![processor-status-register.png](<OPD/questions/Attachments/processor-status-register.png>)
-

@@ -10,4 +10,3 @@ title: Билет 13
 [question-28](OPD/questions/question-28)
 
 ![question-28](OPD/questions/question-28)
-

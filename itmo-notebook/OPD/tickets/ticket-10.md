@@ -10,4 +10,3 @@ title: Билет 10
 [question-32](OPD/questions/question-32)
 
 ![question-32](OPD/questions/question-32)
-

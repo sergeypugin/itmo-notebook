@@ -10,4 +10,3 @@ title: Билет 20
 [question-37](OPD/questions/question-37)
 
 ![question-37](OPD/questions/question-37)
-

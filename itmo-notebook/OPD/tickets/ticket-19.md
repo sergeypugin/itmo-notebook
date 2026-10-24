@@ -10,4 +10,3 @@ title: Билет 19
 [question-36](OPD/questions/question-36)
 
 ![question-36](OPD/questions/question-36)
-

@@ -347,4 +347,3 @@ links:
 
 
 ![Exploding Brain.gif](<matan/sem2/Attachments/Exploding Brain.gif>)
-
