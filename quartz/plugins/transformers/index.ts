@@ -1,1 +1,1 @@
-export {}
+export { MarkdownTransclude } from "./markdownTransclude"
