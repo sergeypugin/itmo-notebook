@@ -55,19 +55,38 @@ def process_file(path: Path) -> bool:
         # Check if line is an embed line
         m = EMBED_LINE.match(line)
         if m:
-            # Look ahead: if next non-empty line exists and is not already blank,
-            # insert a blank line after this one
+            # Check if the next line is already a single blank line with the same quote prefix
+            if i + 1 < len(lines):
+                next_line = lines[i + 1]
+                expected_blank = m.group(1) + "\n"
+                if next_line == expected_blank:
+                    # Already correct - skip to after the blank line
+                    i += 2
+                    continue
+            
+            # First, collapse any existing quote-only lines after the embed line
             j = i + 1
-            while j < len(lines) and lines[j].strip() == "":
-                j += 1
-            if j == i + 1:
-                # Next line is not blank - insert one
-                # Preserve the quote prefix of the embed line for the blank line
-                prefix = m.group(1)
-                lines.insert(i + 1, prefix + "\n")
-                modified = True
-                i += 2
-                continue
+            while j < len(lines):
+                stripped = lines[j].strip()
+                if stripped == "":
+                    j += 1
+                    continue
+                quote_only = re.match(r'^(\s*(?:>\s*)*)$', lines[j])
+                if quote_only:
+                    j += 1
+                    continue
+                break
+            
+            # Remove any quote-only lines between embed and actual content
+            if j > i + 1:
+                del lines[i + 1:j]
+            
+            # Insert exactly one blank line with the same quote prefix
+            prefix = m.group(1)
+            lines.insert(i + 1, prefix + "\n")
+            modified = True
+            i += 2
+            continue
         i += 1
 
     if modified:

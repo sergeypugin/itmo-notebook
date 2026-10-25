@@ -40,3 +40,4 @@ author: Luisa
 В состав комплекса БЭВМ входят:
 
 ![io-controller-register-map.png|679](<OPD/questions/Attachments/io-controller-register-map.png>)
+

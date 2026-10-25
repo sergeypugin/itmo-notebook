@@ -3,41 +3,10 @@ import path from "path"
 import GithubSlugger from "github-slugger"
 import { QuartzTransformerPlugin } from "../types"
 import { FilePath, slugifyFilePath } from "../../util/path"
-
-const MEDIA_EXTENSIONS = new Set([
-  ".png",
-  ".jpg",
-  ".jpeg",
-  ".gif",
-  ".webp",
-  ".svg",
-  ".bmp",
-  ".jxl",
-  ".avif",
-  ".pdf",
-  ".mp4",
-  ".webm",
-  ".ogv",
-  ".avi",
-  ".mov",
-  ".flv",
-  ".wmv",
-  ".mkv",
-  ".mpg",
-  ".mpeg",
-  ".3gp",
-  ".m4v",
-  ".mp3",
-  ".wav",
-  ".m4a",
-  ".ogg",
-  ".oga",
-  ".aac",
-  ".flac",
-])
+import { isMediaUrl } from "./media"
 
 const escapeHtml = (value: string): string =>
-  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+  value.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, "\"")
 
 function isExternal(url: string): boolean {
   return /^[a-z][a-z0-9+.-]*:/i.test(url) || url.startsWith("//") || url.startsWith("#")
@@ -47,7 +16,7 @@ export function isPageEmbed(url: string): boolean {
   if (!url || isExternal(url)) return false
   const target = url.split("#")[0]
   if (!target) return false
-  return !MEDIA_EXTENSIONS.has(path.extname(target).toLowerCase())
+  return !isMediaUrl(target)
 }
 
 function decode(value: string): string {

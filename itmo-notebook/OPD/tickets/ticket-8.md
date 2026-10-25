@@ -10,3 +10,4 @@ title: Билет 8
 [question-23](OPD/questions/question-23)
 
 ![question-23](OPD/questions/question-23)
+

@@ -134,9 +134,8 @@ class LinkConverter:
             if is_embed:
                 # Embed: ![alt](path) - will be transcluded by transformer for notes,
                 # rendered as image for media
-                if alias and alias.isdigit() and not is_note:
-                    # Width hint for media: ![alt|WIDTH](path) -> we'll keep as-is for now
-                    # Could emit HTML <img width="WIDTH"> but markdown doesn't support width natively
+                # If alias is a digit, treat as width hint (Obsidian syntax: |WIDTH)
+                if alias and alias.isdigit():
                     return f"![{display_name}|{alias}]({url})"
                 return f"![{alias or display_name}]({url})\n"
             return f"[{alias or display_name}]({url})"

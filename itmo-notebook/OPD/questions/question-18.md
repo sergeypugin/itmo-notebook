@@ -19,18 +19,17 @@ author: Sergey
 1. **Проверка условий и `IP` $\rightarrow$ `-(SP)`**
 
 	![interrupt_cycle_bcomp_1.png](OPD/questions/Attachments/interrupt_cycle_bcomp_1.png)
-
+	
 	>`INTS` - это микрокоманда, который заставляет процессор выставить сигнал предоставления прерывания и перебрать все прерывания по приоритету
 
 1. **`PS` $\rightarrow$ `-(SP)` и вычисление адреса ячейки, в которой начало программы обработки прерывания**
 
 	![interrupt_cycle_bcomp_2.png](OPD/questions/Attachments/interrupt_cycle_bcomp_2.png)
-
+	
 2. **Загрузка нового состояния процессора**
 
 	![interrupt_cycle_bcomp_3.png](OPD/questions/Attachments/interrupt_cycle_bcomp_3.png)
-
-
+	
 ## Пример программы настройки и обработки прерывания
 
 Программа настраивает ВУ-3 (текстовый принтер) на прерывание по вектору №3. Сам обработчик просто записывает символ в память по запросу.

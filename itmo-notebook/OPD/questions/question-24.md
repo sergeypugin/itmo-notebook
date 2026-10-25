@@ -31,3 +31,4 @@ author: Sergey
 > Операционная система должна поддерживать NUMA-архитектуру, стараясь выделять процессу память строго на его локальном узле.
 
 ![numa_arch.png](OPD/questions/Attachments/numa_arch.png)
+

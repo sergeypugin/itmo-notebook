@@ -54,3 +54,4 @@ author: Sergey
 - **Бит 8 — P (Program):** Признак выполнения программы в автоматическом режиме.
 
 ![status_register.png](OPD/questions/Attachments/status_register.png)
+
