@@ -49,4 +49,3 @@ author: Sergey
 	* 8 бит `REG RD` (выбор регистра для чтения).
 
 ![micro_formats.png](OPD/questions/Attachments/micro_formats.png)
-

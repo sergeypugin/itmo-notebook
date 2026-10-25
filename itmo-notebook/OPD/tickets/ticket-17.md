@@ -10,4 +10,3 @@ title: Билет 17
 [question-24](OPD/questions/question-24)
 
 ![question-24](OPD/questions/question-24)
-

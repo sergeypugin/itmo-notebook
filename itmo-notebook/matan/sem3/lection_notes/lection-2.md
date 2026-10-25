@@ -21,7 +21,7 @@ $$
 > $$
 >
 > ![geometric_meaning_tangent.jpg](matan/sem3/lection_notes/Attachments/geometric_meaning_tangent.jpg)
-> 
+>
 > Если провести плоскость, параллельную $ZOX$ ($y = y_0$), то аналогичное построение покажет, что тангенс угла наклона касательной будет равен частной производной $\frac{\partial f}{\partial x}(x_0, y_0)$.
 
 # 1.5 Полное приращение и полный дифференциал

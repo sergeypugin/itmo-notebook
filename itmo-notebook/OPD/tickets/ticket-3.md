@@ -10,4 +10,3 @@ title: Билет 3
 [question-25](OPD/questions/question-25)
 
 ![question-25](OPD/questions/question-25)
-

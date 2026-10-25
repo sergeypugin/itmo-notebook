@@ -9,7 +9,7 @@ function extractDimensions(source: string): { cleanSource: string; width: number
   }
 
   const lastPart = parts[parts.length - 1]
-  
+
   // Check for width x height format (e.g., 300x200)
   const whMatch = lastPart.match(/^(\d+)x(\d+)$/)
   if (whMatch) {
@@ -19,7 +19,7 @@ function extractDimensions(source: string): { cleanSource: string; width: number
       return { cleanSource: parts.slice(0, -1).join("|"), width, height }
     }
   }
-  
+
   // Check for just width
   const width = parseInt(lastPart, 10)
   if (!Number.isNaN(width) && width > 0) {
@@ -43,18 +43,18 @@ export const ImageWidth: QuartzTransformerPlugin = () => ({
 
           // Check URL for dimensions (markdown images with |width in URL)
           const { cleanUrl, width: urlWidth, height: urlHeight } = extractDimensions(url)
-          
+
           // Check alt for dimensions (markdown images with |width in alt, Obsidian-style)
           const alt: string = node.alt ?? ""
           const { cleanAlt, width: altWidth, height: altHeight } = extractDimensions(alt)
-          
+
           const width = urlWidth ?? altWidth
           const height = urlHeight ?? altHeight
           const finalUrl = urlWidth ? cleanUrl : url
           const finalAlt = altWidth ? cleanAlt : alt
-          
+
           if (!finalAlt) return
-          
+
           if (width === null) return
 
           // Replace the image node with an HTML node that includes width and optionally height

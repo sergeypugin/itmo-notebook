@@ -76,4 +76,3 @@ author: Luisa
 - Такт данных: CPU убирает адрес с этих проводов. И выставляет операнд  — либо процессор считывает число, либо записывает его. Сигнал ALE в этот момент равен нулю, показывая системе, что сейчас на шине лежат данные, а не адрес.
 
 ![multiplexed-bus-architecture.png](<OPD/questions/Attachments/multiplexed-bus-architecture.png>)
-

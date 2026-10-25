@@ -63,7 +63,7 @@ def process_file(path: Path) -> bool:
                     # Already correct - skip to after the blank line
                     i += 2
                     continue
-            
+
             # First, collapse any existing quote-only lines after the embed line
             j = i + 1
             while j < len(lines):
@@ -76,11 +76,11 @@ def process_file(path: Path) -> bool:
                     j += 1
                     continue
                 break
-            
+
             # Remove any quote-only lines between embed and actual content
             if j > i + 1:
                 del lines[i + 1:j]
-            
+
             # Insert exactly one blank line with the same quote prefix
             prefix = m.group(1)
             lines.insert(i + 1, prefix + "\n")
