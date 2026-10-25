@@ -3,8 +3,10 @@
 @use "./variables.scss" as *;
 @use "./syntax.scss";
 @use "./callouts.scss";
+@use "./scrollbar.scss" as scrollbar;
 
 html {
+  @include scrollbar.styled();
   scroll-behavior: smooth;
   text-size-adjust: none;
   overflow-x: hidden;
@@ -219,6 +221,8 @@ a {
     }
 
     & .sidebar {
+      @include scrollbar.styled();
+      overflow-y: auto;
       gap: 1.2rem;
       top: 0;
       box-sizing: border-box;
@@ -579,6 +583,24 @@ p {
   }
 }
 
+pre,
+pre > code,
+.table-container,
+.katex-display > .katex,
+article .katex.horizontal-scroll-inline {
+  @include scrollbar.styled();
+}
+
+article .katex.horizontal-scroll-inline {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
 th {
   text-align: left;
   padding: 0.4rem 0.7rem;
@@ -633,6 +655,7 @@ div:has(> .overflow) {
 
 ul.overflow,
 ol.overflow {
+  @include scrollbar.styled();
   max-height: 100%;
   overflow-y: auto;
   width: 100%;
@@ -675,22 +698,6 @@ ol.overflow {
     overflow-y: hidden;
     width: 100%;
     position: static !important; // Чтобы абсолютный .tag позиционировался относительно .katex-display
-    scrollbar-width: thin;
-    scrollbar-color: var(--lightgray) transparent;
-
-    &::-webkit-scrollbar {
-      height: 4px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: var(--lightgray);
-      border-radius: 4px;
-    }
-
     & > .katex-html {
       display: block;
       position: static !important; // Пропускаем позиционирование .tag

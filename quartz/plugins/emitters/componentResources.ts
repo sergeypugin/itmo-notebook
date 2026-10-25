@@ -8,6 +8,8 @@ import spaRouterScript from "../../components/scripts/spa.inline"
 import popoverScript from "../../components/scripts/popover.inline"
 // @ts-ignore
 import searchScrollScript from "../../components/scripts/searchScroll.inline"
+// @ts-ignore
+import scrollbarScript from "../../components/scripts/scrollbar.inline"
 import baseStyles from "../../styles/base.scss"
 import customStyles from "../../styles/custom.scss"
 import popoverStyle from "../../components/styles/popover.scss"
@@ -259,6 +261,8 @@ function addGlobalPageResources(ctx: BuildCtx, componentResources: ComponentReso
       document.head.appendChild(rybbitScript);
     `)
   }
+
+  componentResources.afterDOMLoaded.push(scrollbarScript)
 
   // Correct search preview scroll position to target the first highlight.
   // Must be pushed before the SPA router: production builds load the last script
