@@ -27,7 +27,7 @@ jobs:
       - name: Checkout source branch
         uses: actions/checkout@v7
         with:
-          token: ${{ github.event_name == 'pull_request' && secrets.AUTO_FORMAT_TOKEN || github.token }}
+          token: ${{ secrets.AUTO_FORMAT_TOKEN || github.token }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           ref: ${{ github.head_ref || github.ref_name }}
 
