@@ -44,7 +44,7 @@ MMU заменяет номер виртуальной страницы на н�
 
 Во многих системах используется комбинация обоих подходов:
 
-![segmentation-paging-layout.png](<OPD/questions/Attachments/segmentation-paging-layout.png>)
+![segmentation-paging-layout.png](Attachments/segmentation-paging-layout.png)
 
 Сначала выбирается сегмент, затем внутри него выполняется страничная адресация.
 
@@ -53,7 +53,7 @@ MMU заменяет номер виртуальной страницы на н�
 
 **MMU** — аппаратный блок управления памятью, расположенный между процессором и оперативной памятью.
 
-![mmu-address-translation.png](<OPD/questions/Attachments/mmu-address-translation.png>)
+![mmu-address-translation.png](Attachments/mmu-address-translation.png)
 
 Основные функции MMU:
 - преобразование виртуальных адресов в физические;

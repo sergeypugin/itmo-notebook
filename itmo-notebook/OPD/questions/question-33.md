@@ -6,7 +6,7 @@ author: Luisa
 ---
 # Модель TCP/IP: выделение адресов (DHCP), сервисы имен (DNS), транспортный и прикладной уровни.
 
-![tcp-ip.png](OPD/questions/Attachments/tcp-ip.png)
+![tcp-ip.png](Attachments/tcp-ip.png)
 
 ## DHCP (Dynamic Host Configuration Protocol) — автоматическое выделение адресов
 

@@ -102,4 +102,4 @@ $$
 > 3. Если $\Delta_2 = 0$, требуется дополнительное исследование.
 
 ---
-[Предыдущая лекция](matan/sem3/lection_notes/lection-3) | [Все лекции](matan/sem3/lection_notes/index) | [Следующая лекция](matan/sem3/lection_notes/lection-5)
+[Предыдущая лекция](lection-3) | [Все лекции](index) | [Следующая лекция](lection-5)

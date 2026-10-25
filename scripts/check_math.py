@@ -139,6 +139,7 @@ def main():
     check_only = "--check" in sys.argv[1:]
 
     warnings = 0
+    changes = []
     for path in sorted(CONTENT_ROOT.rglob("*.md")):
         if any(part in IGNORED_DIRS for part in path.relative_to(CONTENT_ROOT).parts):
             continue
@@ -150,10 +151,17 @@ def main():
         for warning in formatter.warnings:
             print(f"{path.relative_to(CONTENT_ROOT.parent)}: {warning}", file=sys.stderr)
             warnings += 1
-        if not check_only and formatted != original:
-            path.write_text(formatted, encoding="utf-8", newline="\n")
+        if formatted != original:
+            changes.append(path.relative_to(CONTENT_ROOT.parent))
+            if not check_only:
+                path.write_text(formatted, encoding="utf-8", newline="\n")
 
-    if check_only and warnings:
+    if check_only and changes:
+        print(f"Формулы не отформатированы: {len(changes)} файл(ов).", file=sys.stderr)
+        for path in changes:
+            print(f"  {path.as_posix()}", file=sys.stderr)
+        return 1
+    if warnings and check_only:
         print(f"Проверка формул провалена: {warnings} ошибка(и).", file=sys.stderr)
         return 1
     return 0

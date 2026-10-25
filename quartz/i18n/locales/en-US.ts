@@ -5,6 +5,10 @@ export default {
     title: "Untitled",
     description: "No description provided",
   },
+  footnotes: {
+    title: "Footnotes",
+    backReference: ({ index }) => `Back to reference ${index}`,
+  },
   components: {
     callout: {
       note: "Note",

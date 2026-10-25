@@ -1,6 +1,6 @@
 import esbuild from "esbuild"
 import remarkParse from "remark-parse"
-import remarkRehype from "remark-rehype"
+import remarkRehype, { Options as RemarkRehypeOptions } from "remark-rehype"
 import { Processor, unified } from "unified"
 import { Root as MDRoot } from "remark-parse/lib"
 import { Root as HTMLRoot } from "hast"
@@ -13,6 +13,7 @@ import workerpool, { Promise as WorkerPromise } from "workerpool"
 import { QuartzLogger } from "../util/log"
 import { trace } from "../util/trace"
 import { BuildCtx, WorkerSerializableBuildCtx } from "../util/ctx"
+import { i18n } from "../i18n"
 import { styleText } from "util"
 
 export type QuartzMdProcessor = Processor<MDRoot, MDRoot, MDRoot>
@@ -35,10 +36,21 @@ export function createMdProcessor(ctx: BuildCtx): QuartzMdProcessor {
 
 export function createHtmlProcessor(ctx: BuildCtx): QuartzHtmlProcessor {
   const transformers = ctx.cfg.plugins.transformers
+  const options: RemarkRehypeOptions = { allowDangerousHtml: true }
+
+  const footnotes = i18n(ctx.cfg.configuration.locale).footnotes
+  if (footnotes) {
+    options.footnoteLabel = footnotes.title
+    options.footnoteBackLabel = (referenceIndex, rereferenceIndex) =>
+      footnotes.backReference({ index: referenceIndex + 1 }) +
+      // mdast-util-to-hast numbers repeated references to the same footnote as `1-2`
+      (rereferenceIndex > 1 ? `-${rereferenceIndex}` : "")
+  }
+
   return (
     unified()
       // MD AST -> HTML AST
-      .use(remarkRehype, { allowDangerousHtml: true })
+      .use(remarkRehype, options)
       // HTML AST -> HTML AST transforms
       .use(transformers.flatMap((plugin) => plugin.htmlPlugins?.(ctx) ?? []))
   )

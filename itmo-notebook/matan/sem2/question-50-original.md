@@ -7,7 +7,7 @@ links:
   - "[Никольский 1 том.pdf](https://drive.google.com/file/d/1GsOuXkK0v_N22dWdAFFCVkGQasAc1g8u/view?usp=drivesdk)"
 ---
 
-Упрощённую версию можно найти [в этой заметке](matan/sem2/question-50).
+Упрощённую версию можно найти [в этой заметке](question-50).
 
 ## Главное про многочлены Чебышёва первого и второго рода
 
@@ -346,4 +346,4 @@ links:
     $$
 
 
-![Exploding Brain.gif](<matan/sem2/Attachments/Exploding Brain.gif>)
+![Exploding Brain.gif](<Attachments/Exploding Brain.gif>)

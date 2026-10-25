@@ -8,7 +8,7 @@ author: Luisa
 
 **Прерывание** — это сигнал от программного или аппаратного обеспечения, сообщающий процессору о наступлении события, требующего немедленной обработки. В БЭВМ прерывания обычно используются для организации ввода-вывода и сигнализируют о готовности внешнего устройства к обмену данными.
 
-![interrupt-controller-chain.png](<OPD/questions/Attachments/interrupt-controller-chain.png>)
+![interrupt-controller-chain.png](Attachments/interrupt-controller-chain.png)
 
 > По сравнению с асинхронным обменом с опросом прерывания обладают следующими преимуществами:
 > - процессор не тратит время на постоянную проверку готовности устройств;
@@ -38,7 +38,7 @@ author: Luisa
 
 При возникновении запроса на прерывание (IntRq) процессор после завершения текущей команды формирует сигнал предоставления прерывания (IntSCo). Этот сигнал последовательно проходит через контроллеры устройств. Первый контроллер, запросивший прерывание и имеющий разрешение на него, перехватывает сигнал.
 
-![interrupt-control-signals.png](<OPD/questions/Attachments/interrupt-control-signals.png>)
+![interrupt-control-signals.png](Attachments/interrupt-control-signals.png)
 
 После этого:
 1. Контроллер выдает на шину управления сигнал IntV, сообщая процессору о готовности передать вектор.
@@ -49,9 +49,9 @@ author: Luisa
 
 По полученному номеру процессор находит в таблице векторов адрес обработчика прерывания и передаёт ему управление.
 
-![io-dev-interrupt.png](OPD/questions/Attachments/io-dev-interrupt.png)
+![io-dev-interrupt.png](Attachments/io-dev-interrupt.png)
 
-![interrupt-handling-flow.png](<OPD/questions/Attachments/interrupt-handling-flow.png>)
+![interrupt-handling-flow.png](Attachments/interrupt-handling-flow.png)
 
 Регистр состояния процессора:
-![processor-status-register.png](<OPD/questions/Attachments/processor-status-register.png>)
+![processor-status-register.png](Attachments/processor-status-register.png)

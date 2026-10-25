@@ -492,7 +492,10 @@ export async function loadQuartzConfig(
 
   // Import built-in plugins
   const builtinPlugins = await import("../index")
-  const builtinTransformers: unknown[] = [builtinPlugins.MarkdownTransclude()]
+  const builtinTransformers: unknown[] = [
+    builtinPlugins.MarkdownTransclude(),
+    builtinPlugins.ImageWidth(),
+  ]
   const builtinEmitters = [
     builtinPlugins.ComponentResources(),
     builtinPlugins.Assets(),

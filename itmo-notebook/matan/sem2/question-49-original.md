@@ -6,7 +6,7 @@ links:
   - "[Лекции по матфизу.pdf](https://drive.google.com/file/d/1Xu5n78SZIMKfgyqAhqj2XH28_rptd8Oy/view?usp=drivesdk)"
 ---
 
-Упрощённую версию можно найти [в этой заметке](matan/sem2/question-49).
+Упрощённую версию можно найти [в этой заметке](question-49).
 
 ## Полиномы Лежандра и разложения по ним
 

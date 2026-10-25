@@ -64,9 +64,6 @@ plugins:
       enableInHtmlEmbed: false
       enableCheckbox: true
     order: 30
-  - source: "./quartz/plugins/transformers/imageWidth"
-    enabled: true
-    order: 35
   - source: "@quartz-community/github-flavored-markdown"
     enabled: true
     order: 40
@@ -81,7 +78,7 @@ plugins:
   - source: "@quartz-community/crawl-links"
     enabled: true
     options:
-      markdownLinkResolution: shortest
+      markdownLinkResolution: relative
     order: 60
   - source: "@quartz-community/description"
     enabled: true
