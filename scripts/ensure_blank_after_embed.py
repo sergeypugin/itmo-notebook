@@ -64,7 +64,7 @@ def process_file(path: Path) -> bool:
             m = re.match(r"^(\s*(?:>\s*)*)", line)
             if m:
                 embed_prefix = m.group(1)
-            
+
             if embed_prefix and next_line.strip() == embed_prefix.strip() and next_line.startswith(embed_prefix.rstrip()):
                 # Next line has same quote prefix as embed - it's a valid blockquote blank line
                 if i + 2 >= len(lines):
