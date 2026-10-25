@@ -44,41 +44,38 @@ jobs:
       - name: Install tooling
         run: npm ci --prefix scripts
 
-      - name: Ensure blank line after embeds
-        run: python scripts/ensure_blank_after_embed.py
+      - name: Normalize content
+        if: github.event_name == 'push'
+        run: python scripts/normalize.py
 
-      - name: Convert links
-        run: python scripts/convert_links.py apply-all
-
-      - name: Format math
-        run: python scripts/check_math.py
+      - name: Require normalized content
+        if: github.event_name == 'pull_request'
+        run: python scripts/normalize.py --check
 
       - name: Apply EditorConfig rules
-        run: ./scripts/node_modules/.bin/eclint fix "**/*"
+        if: github.event_name == 'push'
+        run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint fix
+
+      - name: Check EditorConfig rules
+        if: github.event_name == 'pull_request'
+        run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint check
 
       - name: Run script tests
         run: python -m unittest discover -s scripts/tests -t .
 
       - name: Restore workflow files
+        if: github.event_name == 'push'
         run: git checkout -- .github/workflows/
 
-      - name: Require a writable token when formatting changed files
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
-        run: |
-          if ! git diff --quiet; then
-            echo "::error::The formatter cannot push to a fork; run it locally before opening the PR"
-            exit 1
-          fi
-
       - name: Commit formatting changes
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        if: github.event_name == 'push'
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: normalize markdown content"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          branch: ${{ github.head_ref || github.ref_name }}
+          branch: ${{ github.ref_name }}
 
       - name: Fail on unfixable math issues
         run: python scripts/check_math.py --check
@@ -136,23 +133,11 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Ensure blank line after embeds
-        run: python scripts/ensure_blank_after_embed.py
-
-      - name: Convert links
-        run: python scripts/convert_links.py apply-all
-
-      - name: Format math
-        run: python scripts/check_math.py
-
       - name: Run script tests
         run: python -m unittest discover -s scripts/tests -t .
 
-      - name: Fail on unconverted links
-        run: python scripts/convert_links.py check
-
-      - name: Fail on unfixable math issues
-        run: python scripts/check_math.py --check
+      - name: Require normalized content
+        run: python scripts/normalize.py --check
 
       - uses: actions/setup-node@v7
         with:

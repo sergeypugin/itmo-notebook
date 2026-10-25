@@ -56,25 +56,34 @@ def rewrite(text):
     return "\n".join(out) + "\n" * end, changed
 
 
-def process_file(path):
+def process_file(path, write=True):
     """Обрабатывает один файл и возвращает True, если он изменён."""
     path = Path(path)
     result, changed = rewrite(path.read_text(encoding="utf-8"))
-    if changed:
+    if changed and write:
         path.write_text(result, encoding="utf-8", newline="\n")
     return changed
 
 
-def process_tree(root):
-    """Обрабатывает заметки дерева и возвращает пути изменённых."""
+def process_tree(root, write=True):
+    """Обрабатывает заметки дерева и возвращает пути, требующие изменения."""
     root = Path(root)
     notes = sorted(root.rglob("*.md"))
     notes = [path for path in notes if not IGNORED_DIRS & set(path.relative_to(root).parts)]
-    return [path.relative_to(root) for path in notes if process_file(path)]
+    return [path.relative_to(root) for path in notes if process_file(path, write)]
 
 
 def main():
-    changed = process_tree(CONTENT_ROOT)
+    if [arg for arg in sys.argv[1:] if arg != "--check"]:
+        print("Использование: python scripts/ensure_blank_after_embed.py [--check]", file=sys.stderr)
+        return 2
+    check_only = "--check" in sys.argv[1:]
+
+    changed = process_tree(CONTENT_ROOT, write=not check_only)
+    if check_only and changed:
+        print(f"Вставки без пустой строки: {len(changed)} файл(ов).", file=sys.stderr)
+        return 1
+
     report = f"Modified {len(changed)} files:" if changed else "No changes needed"
     print("\n".join([report, *(f"  {path}" for path in changed)]), file=sys.stderr)
     return 0

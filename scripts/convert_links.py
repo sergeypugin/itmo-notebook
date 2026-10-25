@@ -320,12 +320,13 @@ class LinkConverter:
 
 
 def main():
-    if len(sys.argv) != 2 or sys.argv[1] not in {"apply-all", "check"}:
-        print("Usage: python scripts/convert_links.py apply-all|check")
+    modes = {"apply-all": False, "check": True, "--check": True}
+    if len(sys.argv) != 2 or sys.argv[1] not in modes:
+        print("Использование: python scripts/convert_links.py apply-all|check", file=sys.stderr)
         return 2
 
     converter = LinkConverter(CONTENT_ROOT)
-    return converter.run(check_only=sys.argv[1] == "check")
+    return converter.run(check_only=modes[sys.argv[1]])
 
 
 if __name__ == "__main__":

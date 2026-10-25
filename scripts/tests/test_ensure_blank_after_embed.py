@@ -86,6 +86,17 @@ class EnsureBlankAfterEmbedTest(unittest.TestCase):
             ("---\n\n![x](a.png)\n\nтекст\n", True),
         )
 
+    def test_check_mode_writes_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            note = root / "a.md"
+            note.write_text("![x](a.png)\nтекст\n", encoding="utf-8", newline="\n")
+
+            result = process_tree(root, write=False)
+
+            self.assertEqual(result, [Path("a.md")])
+            self.assertEqual(note.read_text(encoding="utf-8"), "![x](a.png)\nтекст\n")
+
     def test_process_file_returns_flag(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "a.md"
