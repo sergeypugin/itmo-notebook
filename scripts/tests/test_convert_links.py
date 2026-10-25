@@ -236,6 +236,16 @@ class ConvertLinksTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("a.md:1: target not found", output)
 
+    def test_frontmatter_links_untouched(self):
+        self.write("matan/sem2/question-27.md", "x\n")
+        text = "---\ntitle: x\nlinks:\n  - \"[вопрос 27](matan/sem2/question-27)\"\n---\n\n[w](question-27)\n"
+        self.write("matan/sem2/question-28.md", text)
+
+        code, output = self.convert()
+
+        self.assertEqual(code, 0, output)
+        self.assertEqual(self.read("matan/sem2/question-28.md"), text)
+
     def test_self_link_becomes_dotless_name(self):
         self.write("matan/sem3/index.md", "x\n")
         self.write("matan/sem3/a.md", "[i](matan/sem3/index)\n")

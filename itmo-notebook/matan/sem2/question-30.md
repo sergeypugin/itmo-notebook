@@ -2,8 +2,8 @@
 title: "Преобразование Абеля для сумм"
 author: "Sergey"
 links:
-  - "[вопрос 29](question-29)"
-  - "[вопрос 31](question-31)"
+  - "[вопрос 29](matan/sem2/question-29)"
+  - "[вопрос 31](matan/sem2/question-31)"
 ---
 ### Преобразование Абеля
 

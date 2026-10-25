@@ -159,7 +159,11 @@ class LinkConverter:
         issues = []
         lines = []
         fence = None
+        frontmatter = self.frontmatter_end(text)
         for number, line in enumerate(text.splitlines(keepends=True), 1):
+            if frontmatter is not None and number <= frontmatter:
+                lines.append(line)
+                continue
             ending = "\n" if line.endswith("\n") else ""
             body = line[:-1] if ending else line
             match = FENCE.match(body)
@@ -177,6 +181,22 @@ class LinkConverter:
             body = self.convert_markdown_links(body, current_file, number, issues)
             lines.append(body + ending)
         return "".join(lines), issues
+
+    @staticmethod
+    def frontmatter_end(text):
+        """Возвращает номер последней строки frontmatter или None.
+
+        Ссылки во frontmatter резолвит плагин `note-properties` по своим
+        правилам, не учитывая `markdownLinkResolution`, поэтому YAML
+        остаётся как написан.
+        """
+        lines = text.splitlines()
+        if not lines or lines[0].strip() != "---":
+            return None
+        for number, line in enumerate(lines[1:], 2):
+            if line.strip() == "---":
+                return number
+        return None
 
     def convert_wikilinks(self, line, current_file, number, issues):
         def replace(match):
