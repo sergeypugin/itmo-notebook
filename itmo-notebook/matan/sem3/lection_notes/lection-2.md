@@ -20,7 +20,7 @@ $$
 > \operatorname{tg}\alpha = \frac{\partial f}{\partial y}(x_0, y_0)
 > $$
 >
-> ![geometric_meaning_tangent.jpg](matan/sem3/lection_notes/Attachments/geometric_meaning_tangent.jpg)
+> ![geometric_meaning_tangent.jpg](Attachments/geometric_meaning_tangent.jpg)
 >
 > Если провести плоскость, параллельную $ZOX$ ($y = y_0$), то аналогичное построение покажет, что тангенс угла наклона касательной будет равен частной производной $\frac{\partial f}{\partial x}(x_0, y_0)$.
 
@@ -150,4 +150,4 @@ $$
 > > Аналогично, полагая приращения других пар переменных равными нулю, доказываем равенства для $B$ и $C$.
 
 ---
-[Предыдущая лекция](matan/sem3/lection_notes/lection-1) | [Все лекции](matan/sem3/lection_notes/index) | [Следующая лекция](matan/sem3/lection_notes/lection-3)
+[Предыдущая лекция](lection-1) | [Все лекции](index) | [Следующая лекция](lection-3)

@@ -36,15 +36,6 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Convert links
-        run: python scripts/convert_links.py apply-all
-
-      - name: Format math
-        run: python scripts/check_math.py
-
-      - name: Ensure blank line after embeds
-        run: python scripts/ensure_blank_after_embed.py
-
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
@@ -55,8 +46,20 @@ jobs:
       - name: Install tooling
         run: npm ci --prefix scripts
 
+      - name: Ensure blank line after embeds
+        run: python scripts/ensure_blank_after_embed.py
+
+      - name: Convert links
+        run: python scripts/convert_links.py apply-all
+
+      - name: Format math
+        run: python scripts/check_math.py
+
       - name: Apply EditorConfig rules
         run: ./scripts/node_modules/.bin/eclint fix "**/*"
+
+      - name: Run script tests
+        run: python -m unittest discover -s scripts/tests -t .
 
       - name: Restore workflow files
         run: git checkout -- .github/workflows/
@@ -135,11 +138,20 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Ensure blank line after embeds
+        run: python scripts/ensure_blank_after_embed.py
+
       - name: Convert links
         run: python scripts/convert_links.py apply-all
 
       - name: Format math
         run: python scripts/check_math.py
+
+      - name: Run script tests
+        run: python -m unittest discover -s scripts/tests -t .
+
+      - name: Fail on unconverted links
+        run: python scripts/convert_links.py check
 
       - name: Fail on unfixable math issues
         run: python scripts/check_math.py --check
@@ -151,6 +163,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run Quartz transformer tests
+        run: npx tsx --test quartz/plugins/transformers/imageWidth.test.ts
 
       - name: Install plugins
         run: npx quartz plugin install

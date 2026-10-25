@@ -22,6 +22,10 @@ export interface Translation {
     description: string
   }
   direction?: "ltr" | "rtl"
+  footnotes?: {
+    title: string
+    backReference: (variables: { index: number }) => string
+  }
   components: {
     callout: CalloutTranslation
     backlinks: {

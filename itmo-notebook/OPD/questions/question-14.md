@@ -12,7 +12,7 @@ author: Sergey
 
 Обмен данными строится по следующей иерархической схеме:
 
-![io_connection.png](OPD/questions/Attachments/io_connection.png)
+![io_connection.png](Attachments/io_connection.png)
 
 ## Драйвер - это...
 
@@ -25,16 +25,16 @@ author: Sergey
 - **Асинхронная инициация (Программно-управляемая)**
 	Процессор непрерывно опрашивает регистр состояния контроллера (spin-loop), ожидая появления бита готовности. Основной недостаток — процессор простаивает и тратит такты впустую во время ожидания отклика медленного ВУ.
 
-	![sync_overhead.png](OPD/questions/Attachments/sync_overhead.png)
+	![sync_overhead.png](Attachments/sync_overhead.png)
 
 - **Синхронная инициация**
 	Процессор обращается к ВУ в строго определенные моменты времени. Применяется редко и только для устройств, чьё время отклика жестко фиксировано и заранее известно.
-	![async_overhead.png](OPD/questions/Attachments/async_overhead.png)
+	![async_overhead.png](Attachments/async_overhead.png)
 
 - **По прерыванию**
 	Процессор дает ВУ команду и продолжает выполнять полезную работу. Когда ВУ готово к обмену, контроллер посылает процессору аппаратный сигнал прерывания. Процессор временно откладывает текущую задачу, обслуживает устройство и возвращается назад.
 
-	![interrupt_init.png](OPD/questions/Attachments/interrupt_init.png)
+	![interrupt_init.png](Attachments/interrupt_init.png)
 
 ## Передача информации
 

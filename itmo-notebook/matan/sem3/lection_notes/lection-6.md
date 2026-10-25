@@ -158,4 +158,4 @@ $$
 > $$
 
 ---
-[Предыдущая лекция](matan/sem3/lection_notes/lection-5) | [Все лекции](matan/sem3/lection_notes/index)
+[Предыдущая лекция](lection-5) | [Все лекции](index)

@@ -12,7 +12,7 @@ author: Sergey
 Микропрограммное устройство управления БЭВМ работает как встроенный в процессор мини-процессор, который интерпретирует машинные команды путём их потактового разбиения на простейшие действия (микрооперации).
 
 ## Схема МПУ:
-![mcu_structure.png](OPD/questions/Attachments/mcu_structure.png)
+![mcu_structure.png](Attachments/mcu_structure.png)
 
 >- **Память микрокоманд (ПМК):**
 >	256 ячеек, в которых хранится управляющий микрокод БЭВМ.
@@ -48,4 +48,4 @@ author: Sergey
 	* 4 бита `ALU` (выбор вентилей АЛУ).
 	* 8 бит `REG RD` (выбор регистра для чтения).
 
-![micro_formats.png](OPD/questions/Attachments/micro_formats.png)
+![micro_formats.png](Attachments/micro_formats.png)

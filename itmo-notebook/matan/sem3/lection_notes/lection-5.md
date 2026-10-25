@@ -211,4 +211,4 @@ x'(t_0)(x - x_0) + y'(t_0)(y - y_0) + z'(t_0)(z - z_0) = 0 \tag{1.123}
 $$
 
 ---
-[Предыдущая лекция](matan/sem3/lection_notes/lection-4) | [Все лекции](matan/sem3/lection_notes/index) | [Следующая лекция](matan/sem3/lection_notes/lection-6)
+[Предыдущая лекция](lection-4) | [Все лекции](index) | [Следующая лекция](lection-6)

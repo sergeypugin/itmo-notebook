@@ -8,7 +8,7 @@ author: Luisa
 
 В БЭВМ обмен информацией между процессором и внешними устройствами (ВУ) осуществляется через **контроллеры устройств ввода-вывода**.
 
-![io-controller-structure.png](<OPD/questions/Attachments/io-controller-structure.png>)
+![io-controller-structure.png](Attachments/io-controller-structure.png)
 
 Контроллер содержит:
 
@@ -26,17 +26,17 @@ author: Luisa
 
 В БЭВМ реализованы программно-управляемый ввод-вывод:
 
-Асинхронный обмен: [question-16](OPD/questions/question-16)
-Обмен по прерыванию: [question-17](OPD/questions/question-17)
+Асинхронный обмен: [question-16](question-16)
+Обмен по прерыванию: [question-17](question-17)
 
 >ПДП в БЭВМ не реализован, поскольку контроллеры устройств не содержат соответствующих аппаратных средств.
 
 Для работы с внешними устройствами используются команды:
 
-![io-commands.png](OPD/questions/Attachments/io-commands.png)
+![io-commands.png](Attachments/io-commands.png)
 
 ### Основные устройства ввода-вывода БЭВМ
 
 В состав комплекса БЭВМ входят:
 
-![io-controller-register-map.png|679](<OPD/questions/Attachments/io-controller-register-map.png>)
+![io-controller-register-map.png|679](Attachments/io-controller-register-map.png)

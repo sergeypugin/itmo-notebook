@@ -5,6 +5,10 @@ export default {
     title: "Без названия",
     description: "Описание отсутствует",
   },
+  footnotes: {
+    title: "Сноски",
+    backReference: ({ index }) => `Вернуться к сноске ${index}`,
+  },
   components: {
     callout: {
       note: "Заметка",

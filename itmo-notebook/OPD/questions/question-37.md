@@ -19,7 +19,7 @@ author: Sergey
 3. **Информационные биты:** Сами данные (обычно 8 бит).
 4. **Стоповые биты (`11`):** Гарантируют возвращение линии в состояние логической `1` перед началом следующего кадра.
 
-![async-cadr-format.png](OPD/questions/Attachments/async-cadr-format.png)
+![async-cadr-format.png](Attachments/async-cadr-format.png)
 
 Рис. 1: Формат кадра асинхронного обмена
 
@@ -37,6 +37,6 @@ author: Sergey
 >[!note] Последующая информация только для тех, кто знает физику
 
 На слайде из презентации наглядно показано, как делиться частота, и как уменьшается угол сдвига (очевидно, что в 2 раза):
-![frequency-division.png](OPD/questions/Attachments/frequency-division.png)
+![frequency-division.png](Attachments/frequency-division.png)
 
 Рис. 2: Принцип деления частоты для центровки считывания
