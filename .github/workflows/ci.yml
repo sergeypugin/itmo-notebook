@@ -45,20 +45,19 @@ jobs:
         run: npm ci --prefix scripts
 
       - name: Normalize content
-        if: github.event_name == 'push'
-        run: python scripts/normalize.py
+        env:
+          MODE: ${{ github.event_name == 'push' && 'fix' || 'check' }}
+        run: |
+          if [ "$MODE" = "fix" ]; then
+            python scripts/normalize.py
+          else
+            python scripts/normalize.py --check
+          fi
 
-      - name: Require normalized content
-        if: github.event_name == 'pull_request'
-        run: python scripts/normalize.py --check
-
-      - name: Apply EditorConfig rules
-        if: github.event_name == 'push'
-        run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint fix
-
-      - name: Check EditorConfig rules
-        if: github.event_name == 'pull_request'
-        run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint check
+      - name: Apply or check EditorConfig rules
+        env:
+          MODE: ${{ github.event_name == 'push' && 'fix' || 'check' }}
+        run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint "$MODE"
 
       - name: Run script tests
         run: python -m unittest discover -s scripts/tests -t .
@@ -121,23 +120,13 @@ jobs:
           path: public
 
   build-check:
+    needs: format
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v7
-
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.x"
-
-      - name: Run script tests
-        run: python -m unittest discover -s scripts/tests -t .
-
-      - name: Require normalized content
-        run: python scripts/normalize.py --check
 
       - uses: actions/setup-node@v7
         with:
