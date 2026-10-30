@@ -1,10 +1,12 @@
 ---
-title: База знаний студентов ПИиКТ
+title: ITMO Notebook
 ---
+# ITMO Notebook
+
 Добро пожаловать на сайт! Здесь вы сможете найти расписанные билеты по следующим предметам:
 - [ОПД - Основы Профессиональной деятельности](OPD/index)
 - [МатАн - Математический Анализ](matan/index)
 
 | Шаблон сайта                                                                  | Репозиторий                                                   |
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| [quartz-ready-template](https://github.com/sergeypugin/quartz-ready-template) | [itmo-notebook](https://github.com/sergeypugin/itmo-notebook) |
+| [Quartz Ready Template](https://github.com/sergeypugin/quartz-ready-template) | [itmo-notebook](https://github.com/sergeypugin/itmo-notebook) |
