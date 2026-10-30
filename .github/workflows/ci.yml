@@ -118,7 +118,10 @@ jobs:
 
   trigger-deployment:
     needs: [format]
-    if: github.ref == 'refs/heads/main' && needs.format.result == 'success'
+    # Only trigger if we are on main and the format job succeeded.
+    # Note: GITHUB_TOKEN won't trigger this on bot push, so we rely on the direct 'push' trigger in deploy.yml
+    # but we keep this for manual workflow_dispatch or other cases.
+    if: github.ref == 'refs/heads/main' && needs.format.result == 'success' && github.event_name != 'push'
     runs-on: ubuntu-latest
     permissions:
       actions: write
