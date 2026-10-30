@@ -1,8 +1,8 @@
-name: Validate, format, and deploy
+name: Validate and format
 
 on:
   push:
-    branches: ['**']
+    branches: ["**"]
   pull_request:
   workflow_dispatch:
 
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -112,9 +112,23 @@ jobs:
         if: always()
         run: git config --local --unset-all http.https://github.com/.extraheader || true
 
-      - name: Resolve checked-out revision
+      - name: Resolve normalized revision
         id: revision
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  trigger-deployment:
+    needs: [format]
+    if: github.ref == 'refs/heads/main' && needs.format.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Trigger deployment for main
+        env:
+          DEPLOY_REVISION: ${{ needs.format.outputs.revision }}
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main -f revision="$DEPLOY_REVISION"
 
   check:
     needs: [fork-policy]
@@ -126,8 +140,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    outputs:
-      revision: ${{ steps.revision.outputs.sha }}
     steps:
       - name: Checkout source branch
         uses: actions/checkout@v7
@@ -160,26 +172,22 @@ jobs:
       - name: Run script tests
         run: python -m unittest discover -s scripts/tests -t .
 
-      - name: Resolve checked-out revision
-        id: revision
-        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-  build:
-    name: ${{ github.event_name == 'pull_request' && 'build-check' || 'build' }}
-    needs: [fork-policy, format, check]
+  build-check:
+    name: build-check
+    needs: [fork-policy, check]
     if: |
       always() &&
-      (github.event_name != 'pull_request' || github.event.pull_request.base.ref == 'main') &&
-      (needs.fork-policy.result == 'success' || (github.event_name != 'pull_request' && needs.fork-policy.result == 'skipped')) &&
-      (needs.format.result == 'success' || needs.format.result == 'skipped') &&
-      (needs.check.result == 'success' || needs.check.result == 'skipped')
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.base.ref == 'main' &&
+      needs.fork-policy.result == 'success' &&
+      needs.check.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.sha || github.event_name == 'workflow_dispatch' && github.sha || needs.format.outputs.revision || needs.check.outputs.revision }}
+          ref: ${{ github.sha }}
           persist-credentials: false
           fetch-depth: 0
 
@@ -192,39 +200,15 @@ jobs:
         run: npm ci
 
       - name: Run Quartz transformer tests
-        if: github.event_name == 'pull_request'
         run: npx tsx --test quartz/plugins/transformers/imageWidth.test.ts
 
       - name: Install plugins
         run: npx quartz plugin install --from-config
 
       - name: Set baseUrl for GitHub Pages
-        run: |
-          sed -i "s|baseUrl:.*|baseUrl: ${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}|" quartz.config.yaml
+        env:
+          BASE_URL: ${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+        run: 'sed -i "s|baseUrl:.*|baseUrl: $BASE_URL|" quartz.config.yaml'
 
       - name: Build Quartz
         run: npx quartz build -d itmo-notebook
-
-      - name: Upload artifact
-        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: public
-
-  deploy:
-    needs: build
-    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    concurrency:
-      group: pages
-      cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
