@@ -13,9 +13,9 @@
 ## О проекте
 
 Репозиторий содержит разобранные экзаменационные билеты по предметам:
-- [ОПД - Основы Профессиональной деятельности](https://sergeypugin.github.io/itmo-notebook/opd)
-- [МатАн - Математический Анализ](https://sergeypugin.github.io/itmo-notebook/matan)
-Материалы автоматически публикуются на сайт https://sergeypugin.github.io/itmo-notebook. Заметки поддерживают Markdown-синтаксис, коллауты Obsidian и другие возможности Quartz.
+- [ОПД - Основы Профессиональной Деятельности](https://sergeypugin.github.io/itmo-notebook/opd)
+- [МатАн - Математический анализ](https://sergeypugin.github.io/itmo-notebook/matan)
+Материалы автоматически публикуются на сайте https://sergeypugin.github.io/itmo-notebook. Заметки поддерживают Markdown-синтаксис, коллауты Obsidian и другие возможности Quartz.
 
 Для ссылок используйте стандартный Markdown-синтаксис. Как устроить окружение, какие правила оформления действуют и как прогнать проверки перед PR, описано в [CONTRIBUTING](CONTRIBUTING.md); устройство скриптов -- в [README папки `scripts`](scripts/README.md).
 
