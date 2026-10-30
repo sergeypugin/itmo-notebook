@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
-"""Преобразует ссылки хранилища в относительные markdown-ссылки.
+"""Convert vault links to relative Markdown links.
 
-Вики-ссылки Obsidian заменяются на markdown, а пути уже написанных
-markdown-ссылок переписываются относительно каталога текущей заметки.
-Если хотя бы одна ссылка не разрешилась, печатаются все ошибки и ни один
-файл не меняется.
+Obsidian wikilinks become Markdown links, and destinations of existing
+Markdown links are rewritten relative to the current note. If at least
+one link cannot be resolved, all errors are printed and no file is
+modified.
 """
+import argparse
+import os
 import posixpath
 import re
 import sys
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parent
-CONTENT_ROOT = REPO_ROOT / "itmo-notebook"
-IGNORED_DIRS = {".obsidian", "_ignore", ".git", "node_modules"}
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import utils
+
 BLUE_BIBLE_URL = (
     "https://se.ifmo.ru/documents/10180/38002/%D0%92%D0%B2%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D0%B5+"
     "%D0%B2+%D0%9C%D0%B8%D0%BA%D1%80%D0%BE%D0%AD%D0%92%D0%9C/"
@@ -22,15 +26,15 @@ BLUE_BIBLE_URL = (
 )
 
 WIKILINK = re.compile(r"(!?)\[\[([^\]\n]*)\]\]")
-MD_LINK = re.compile(r"(!?)\[([^\]\n]*)\]\(([^)\n]*)\)")
-CODE_SPAN = re.compile(r"(`+)([^`]*?)\1")
+MD_LINK = re.compile(r"(!?)\[([^\]\n]*)\]\((<[^>\n]+>|[^)\n]*)\)")
+CODE_SPAN = re.compile(r"(`+)(.*?)\1")
 FENCE = re.compile(r"^\s*(```|~~~)")
 SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.\-]*:")
 WIDTH = re.compile(r"^(?:\d+|\d+x\d+|x\d+)$")
 
 
 def sub_outside_code(pattern, replace, line):
-    """Подставляет совпадения, не заходя внутрь inline-code."""
+    """Apply substitutions while staying outside inline code."""
     masked = CODE_SPAN.sub(lambda match: " " * len(match.group(0)), line)
     pieces = []
     last = 0
@@ -45,7 +49,7 @@ def sub_outside_code(pattern, replace, line):
 
 
 class LinkConverter:
-    """Разрешает цели по индексу хранилища и переписывает ссылки относительно заметки."""
+    """Resolve link targets against the vault index and rewrite them relative to the note."""
 
     def __init__(self, root):
         self.root_dir = Path(root)
@@ -63,17 +67,18 @@ class LinkConverter:
             self.add_index_entry(path.name, relative_path)
             self.add_index_entry(path.stem, relative_path)
 
-        for path in self.root_dir.rglob("*"):
-            relative_parts = path.relative_to(self.root_dir).parts
-            if not path.is_file() or path.suffix.lower() == ".md":
-                continue
-            if any(part in IGNORED_DIRS for part in relative_parts):
-                continue
-            relative_path = path.relative_to(self.root_dir)
-            self.files.add(relative_path.as_posix().lower())
-            self.add_index_entry(relative_path.as_posix(), relative_path)
-            self.add_index_entry(path.name, relative_path)
-            self.add_index_entry(path.stem, relative_path)
+        ignored = {d.lower() for d in utils.IGNORED_DIRS}
+        for dirpath, dirnames, filenames in os.walk(self.root_dir):
+            dirnames[:] = [d for d in dirnames if d.lower() not in ignored]
+            for filename in filenames:
+                if filename.lower().endswith(".md"):
+                    continue
+                file_path = Path(dirpath) / filename
+                relative_path = file_path.relative_to(self.root_dir)
+                self.files.add(relative_path.as_posix().lower())
+                self.add_index_entry(relative_path.as_posix(), relative_path)
+                self.add_index_entry(file_path.name, relative_path)
+                self.add_index_entry(file_path.stem, relative_path)
 
     def add_index_entry(self, key, path):
         normalized_key = key.lower().replace("\\", "/")
@@ -81,17 +86,10 @@ class LinkConverter:
         paths.setdefault(normalized_key, set()).add(path)
 
     def markdown_files(self):
-        files = [
-            path
-            for path in self.root_dir.rglob("*.md")
-            if not any(
-                part in IGNORED_DIRS for part in path.relative_to(self.root_dir).parts
-            )
-        ]
-        return sorted(files)
+        return utils.markdown_files(self.root_dir)
 
     def resolve(self, target, current_file):
-        """Ищет цель вики-ссылки; возвращает путь, якорь, причину отказа и кандидатов."""
+        """Look up a wikilink target; return path, anchor, failure reason and candidates."""
         normalized_target = target.replace("\\", "/").strip()
         target_path, separator, fragment = normalized_target.partition("#")
         anchor = f"#{fragment}" if separator else ""
@@ -121,7 +119,7 @@ class LinkConverter:
         return None, anchor, "ambiguous target", matches
 
     def lookup_root(self, target):
-        """Ищет путь от корня хранилища; возвращает файл и всех кандидатов."""
+        """Look up a vault-root path; return the file and all candidates."""
         key = target.lower()
         matches = set()
         for attempt in (key, key + ".md"):
@@ -131,7 +129,7 @@ class LinkConverter:
         return None, matches
 
     def name_candidates(self, target):
-        """Возвращает файлы с таким именем без учёта каталога."""
+        """Return files with this bare name, ignoring directories."""
         key = target.lower()
         matches = set(self.names.get(key, set()))
         if not matches and not key.endswith(".md"):
@@ -139,7 +137,7 @@ class LinkConverter:
         return matches
 
     def is_note_relative(self, target, current_file):
-        """Проверяет, что путь без префикса уже отсчитывается от заметки."""
+        """Check that a prefix-less path is already relative to the note."""
         joined = posixpath.normpath(
             posixpath.join(current_file.parent.as_posix(), target)
         )
@@ -148,7 +146,7 @@ class LinkConverter:
         return joined.lower() in self.files or (joined.lower() + ".md") in self.files
 
     def destination(self, resolved, current_file, anchor=""):
-        """Строит относительный путь от заметки; пробелы требуют угловых скобок."""
+        """Build the path relative to the note; spaces need angle brackets."""
         url = posixpath.relpath(resolved.as_posix(), current_file.parent.as_posix())
         if resolved.suffix.lower() == ".md" and url.endswith(".md"):
             url = url[:-3]
@@ -184,14 +182,13 @@ class LinkConverter:
 
     @staticmethod
     def frontmatter_end(text):
-        """Возвращает номер последней строки frontmatter или None.
+        """Number of the last frontmatter line, or None.
 
-        Ссылки во frontmatter резолвит плагин `note-properties` по своим
-        правилам, не учитывая `markdownLinkResolution`, поэтому YAML
-        остаётся как написан.
+        Links in frontmatter are resolved by the `note-properties` plugin
+        under its own rules, so YAML stays as written.
         """
         lines = text.splitlines()
-        if not lines or lines[0].strip() != "---":
+        if not lines or lines[0].removeprefix("\ufeff").strip() != "---":
             return None
         for number, line in enumerate(lines[1:], 2):
             if line.strip() == "---":
@@ -203,9 +200,12 @@ class LinkConverter:
             is_embed = bool(match.group(1))
             parts = match.group(2).replace(r"\|", "|").split("|")
             target = parts[0].strip()
-            alias = parts[1].strip() if len(parts) > 1 else ""
+            alias = "|".join(p.strip() for p in parts[1:]) if len(parts) > 1 else ""
 
             if target == "blue_bible.pdf":
+                issues.append(
+                    (number, match.group(0), "wikilink can be converted", set(), "change")
+                )
                 return f"[{alias or 'синяя библия'}]({BLUE_BIBLE_URL})"
 
             resolved, anchor, reason, candidates = self.resolve(target, current_file)
@@ -291,7 +291,7 @@ class LinkConverter:
 
             for number, link, reason, candidates, kind in issues:
                 if kind == "error" or check_only:
-                    message = f"{relative_path.as_posix()}:{number}: {reason}: {link}"
+                    message = f"{utils.display_path(path)}:{number}: {reason}: {link}"
                     if candidates:
                         names = ", ".join(sorted(c.as_posix() for c in candidates))
                         message += f" (candidates: {names})"
@@ -319,14 +319,23 @@ class LinkConverter:
         return 0
 
 
-def main():
-    modes = {"apply-all": False, "check": True, "--check": True}
-    if len(sys.argv) != 2 or sys.argv[1] not in modes:
-        print("Использование: python scripts/convert_links.py apply-all|check", file=sys.stderr)
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Convert vault links to relative Markdown links.")
+    utils.add_root_argument(parser)
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--check", action="store_true", help="report without modifying files")
+    modes.add_argument(
+        "--apply-all", action="store_true", help="rewrite links (default when no mode is given)"
+    )
+    arguments = parser.parse_args(argv)
+
+    try:
+        root = utils.resolve_root(arguments.root)
+    except ValueError as error:
+        print(error, file=sys.stderr)
         return 2
 
-    converter = LinkConverter(CONTENT_ROOT)
-    return converter.run(check_only=modes[sys.argv[1]])
+    return LinkConverter(root).run(check_only=arguments.check)
 
 
 if __name__ == "__main__":

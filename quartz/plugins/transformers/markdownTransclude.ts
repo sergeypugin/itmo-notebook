@@ -1,5 +1,5 @@
 import { visit } from "unist-util-visit"
-import path from "path"
+
 import GithubSlugger from "github-slugger"
 import { QuartzTransformerPlugin } from "../types"
 import { FilePath, slugifyFilePath } from "../../util/path"

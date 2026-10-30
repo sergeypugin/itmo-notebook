@@ -1,17 +1,9 @@
-import test, {
-  describe,
-  beforeEach,
-  afterEach,
-  mock
-} from "node:test"
+import test, { describe, beforeEach, afterEach, mock } from "node:test"
 import assert from "node:assert"
 import fs from "fs"
 import path from "path"
 import os from "os"
-import {
-  symlinkOrCopySync,
-  symlinkOrCopy
-} from "./helpers.js"
+import { symlinkOrCopySync, symlinkOrCopy } from "./helpers.js"
 
 function makeTmpDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), "quartz-symlink-test-"))
@@ -32,10 +24,7 @@ describe("symlinkOrCopySync", () => {
   })
 
   afterEach(() => {
-    fs.rmSync(tmpDir, {
-      recursive: true,
-      force: true
-    })
+    fs.rmSync(tmpDir, { recursive: true, force: true })
   })
 
   test("creates a symlink on success", () => {
@@ -74,10 +63,7 @@ describe("symlinkOrCopySync", () => {
     const linkPath = path.join(tmpDir, "link")
 
     const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform")
-    Object.defineProperty(process, "platform", {
-      value: "win32",
-      configurable: true
-    })
+    Object.defineProperty(process, "platform", { value: "win32", configurable: true })
 
     let callCount = 0
     const originalSymlinkSync = fs.symlinkSync
@@ -110,10 +96,7 @@ describe("symlinkOrCopySync", () => {
     const linkPath = path.join(tmpDir, "link")
 
     const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform")
-    Object.defineProperty(process, "platform", {
-      value: "win32",
-      configurable: true
-    })
+    Object.defineProperty(process, "platform", { value: "win32", configurable: true })
 
     const originalSymlinkSync = fs.symlinkSync
     mock.method(fs, "symlinkSync", (_t, _lp, _type) => {
@@ -143,10 +126,7 @@ describe("symlinkOrCopySync", () => {
     const linkPath = path.join(tmpDir, "link")
 
     const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform")
-    Object.defineProperty(process, "platform", {
-      value: "linux",
-      configurable: true
-    })
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true })
 
     const originalSymlinkSync = fs.symlinkSync
     mock.method(fs, "symlinkSync", (_t, _lp, _type) => {
@@ -177,10 +157,7 @@ describe("symlinkOrCopy", () => {
   })
 
   afterEach(() => {
-    fs.rmSync(tmpDir, {
-      recursive: true,
-      force: true
-    })
+    fs.rmSync(tmpDir, { recursive: true, force: true })
   })
 
   test("creates a symlink on success", async () => {
@@ -207,10 +184,7 @@ describe("symlinkOrCopy", () => {
     const linkPath = path.join(tmpDir, "link")
 
     const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform")
-    Object.defineProperty(process, "platform", {
-      value: "win32",
-      configurable: true
-    })
+    Object.defineProperty(process, "platform", { value: "win32", configurable: true })
 
     const originalSymlink = fs.promises.symlink
     mock.method(fs.promises, "symlink", async (_t, _lp, _type) => {
@@ -240,10 +214,7 @@ describe("symlinkOrCopy", () => {
     const linkPath = path.join(tmpDir, "link")
 
     const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform")
-    Object.defineProperty(process, "platform", {
-      value: "linux",
-      configurable: true
-    })
+    Object.defineProperty(process, "platform", { value: "linux", configurable: true })
 
     mock.method(fs.promises, "symlink", async (_t, _lp, _type) => {
       const err = new Error("EPERM: operation not permitted, symlink")

@@ -1,35 +1,48 @@
 #!/usr/bin/env python3
-"""Ставит каждый `$$` на отдельную строку.
+"""Put every `$$` on its own line.
 
-remark-math открывает display-формулу только когда `$$` занимает строку
-целиком. Приклеенный к формуле `$$` (`a =$$` или `$$= b`) читается как
-inline-формула, блок не закрывается и съедает заголовки и абзацы до
-следующего `$$`.
+remark-math opens a display formula only when `$$` occupies a whole line.
+A delimiter glued to the formula (`a =$$` or `$$= b`) is read as inline
+math, the block never closes and swallows headings and paragraphs up to
+the next `$$`.
 """
+import argparse
 import re
 import sys
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-CONTENT_ROOT = SCRIPT_DIR.parent / "itmo-notebook"
-IGNORED_DIRS = {".obsidian", "_ignore", ".git", "node_modules"}
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import utils
 
 FENCE = re.compile(r"^\s*(```|~~~)")
 HEADING = re.compile(r"^#{1,6}\s")
 QUOTE = re.compile(r"^(\s*(?:>\s*)*)")
-INLINE = re.compile(r"(?<!\$)\$(?!\$)([^$\n]+?)(?<!\$)\$(?!\$)")
+INLINE_DELIMITER = re.compile(r"(?<!\$)\$(?!\$)")
 DOLLARS = re.compile(r"\$+")
-CODE_SPAN = re.compile(r"`[^`\n]*`")
+CODE_SPAN = re.compile(r"(`+)(.*?)\1")
 
 
 def mask_code(text):
-    return CODE_SPAN.sub(lambda match: " " * len(match.group()), text)
+    return CODE_SPAN.sub(lambda match: " " * len(match.group(0)), text)
+
+
+def is_escaped(text, index):
+    """Return whether a dollar has an odd number of preceding backslashes."""
+    backslashes = 0
+    index -= 1
+    while index >= 0 and text[index] == "\\":
+        backslashes += 1
+        index -= 1
+    return backslashes % 2 == 1
 
 
 def split_display(text):
-    """Режет строку на куски, между которыми стоят `$$`, и собирает замечания.
+    """Cut a line into chunks around `$$` and collect notes about broken delimiters.
 
-    Кусок `$` в конце `$$$` остаётся текстом, а не выдуманным разделителем.
+    A leftover `$` in `$$$` stays text instead of inventing another delimiter.
     """
     visible = mask_code(text)
     chunks = []
@@ -38,6 +51,8 @@ def split_display(text):
     singles = 0
 
     for match in DOLLARS.finditer(visible):
+        if is_escaped(visible, match.start()):
+            continue
         width = match.end() - match.start()
         if width == 1:
             singles += 1
@@ -46,22 +61,42 @@ def split_display(text):
         chunks.extend([("$$", True)] * (width // 2))
         cursor = match.end()
         if width % 2:
-            notes.append("нечётное число `$` подряд")
+            notes.append("odd number of `$` in a row")
             cursor -= 1
 
     chunks.append((text[cursor:], False))
     if singles % 2:
-        notes.append("непарный `$`, похоже на незакрытую inline-формулу")
+        notes.append("unpaired `$`, looks like an unterminated inline formula")
     return chunks, notes
 
 
 def normalize_inline(line):
-    if "`" in line:
-        return line
     stripped = line.strip()
     if stripped.startswith("|") and stripped.endswith("|"):
         return line
-    return INLINE.sub(lambda match: f"${match.group(1).strip()}$", line)
+    masked = mask_code(line)
+    matches = []
+    opening = None
+    for match in INLINE_DELIMITER.finditer(masked):
+        if is_escaped(masked, match.start()):
+            continue
+        if opening is None:
+            opening = match.start()
+        else:
+            matches.append((opening, match.end()))
+            opening = None
+
+    if not matches:
+        return line
+
+    pieces = []
+    last = 0
+    for start, end in matches:
+        pieces.append(line[last:start])
+        pieces.append(f"${line[start + 1 : end - 1].strip()}$")
+        last = end
+    pieces.append(line[last:])
+    return "".join(pieces)
 
 
 class Formatter:
@@ -76,7 +111,7 @@ class Formatter:
         for number, line in enumerate(text.splitlines(), 1):
             self.handle(number, line)
         if self.inside:
-            self.warnings.append("display-формула не закрыта до конца файла")
+            self.warnings.append("display formula is not closed before the end of the file")
         result = "\n".join(self.lines)
         return result + "\n" if text.endswith(("\n", "\r")) else result
 
@@ -92,7 +127,7 @@ class Formatter:
             self.lines.append(line)
             return
 
-        if number == 1 and line.strip() == "---":
+        if number == 1 and line.removeprefix("\ufeff").strip() == "---":
             self.frontmatter = True
             self.lines.append(line)
             return
@@ -108,13 +143,13 @@ class Formatter:
 
         if HEADING.match(content):
             if "$" in content:
-                self.warnings.append(f"строка {number}: в заголовке есть LaTeX-формула")
+                self.warnings.append(f"line {number}: formula in a heading")
             self.lines.append(line)
             return
 
         chunks, notes = split_display(content)
         for note in notes:
-            self.warnings.append(f"строка {number}: {note}")
+            self.warnings.append(f"line {number}: {note}")
 
         if not any(delimiter for _, delimiter in chunks):
             self.lines.append(line if self.inside else normalize_inline(line))
@@ -132,37 +167,40 @@ class Formatter:
                     self.lines.append(normalize_inline(prefix + strip))
 
 
-def main():
-    if [arg for arg in sys.argv[1:] if arg != "--check"]:
-        print("Использование: python scripts/check_math.py [--check]", file=sys.stderr)
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Put every `$$` on its own line.")
+    utils.add_root_argument(parser)
+    parser.add_argument("--check", action="store_true", help="report instead of writing")
+    arguments = parser.parse_args(argv)
+
+    try:
+        root = utils.resolve_root(arguments.root)
+    except ValueError as error:
+        print(error, file=sys.stderr)
         return 2
-    check_only = "--check" in sys.argv[1:]
 
     warnings = 0
     changes = []
-    for path in sorted(CONTENT_ROOT.rglob("*.md")):
-        if any(part in IGNORED_DIRS for part in path.relative_to(CONTENT_ROOT).parts):
-            continue
-
+    for path in utils.markdown_files(root):
         original = path.read_text(encoding="utf-8")
         formatter = Formatter()
         formatted = formatter.format(original)
 
         for warning in formatter.warnings:
-            print(f"{path.relative_to(CONTENT_ROOT.parent)}: {warning}", file=sys.stderr)
+            print(f"{utils.display_path(path)}: {warning}", file=sys.stderr)
             warnings += 1
         if formatted != original:
-            changes.append(path.relative_to(CONTENT_ROOT.parent))
-            if not check_only:
+            changes.append(path)
+            if not arguments.check:
                 path.write_text(formatted, encoding="utf-8", newline="\n")
 
-    if check_only and changes:
-        print(f"Формулы не отформатированы: {len(changes)} файл(ов).", file=sys.stderr)
+    if arguments.check and changes:
+        print(f"Math is not formatted: {len(changes)} file(s).", file=sys.stderr)
         for path in changes:
-            print(f"  {path.as_posix()}", file=sys.stderr)
+            print(f"  {utils.display_path(path)}", file=sys.stderr)
         return 1
-    if warnings and check_only:
-        print(f"Проверка формул провалена: {warnings} ошибка(и).", file=sys.stderr)
+    if arguments.check and warnings:
+        print(f"Math check failed: {warnings} problem(s).", file=sys.stderr)
         return 1
     return 0
 

@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
-"""Ставит пустую строку после каждой вставки.
+"""Insert a blank line after every embed line.
 
-Вставка -- строка целиком из `![alt](путь)` или `![[файл]]`. Внутри цитаты
-пустая строка получает тот же префикс `>`, иначе цитата рвётся.
+An embed is a line made entirely of `![alt](path)` or `![[file]]`.
+Inside a blockquote the blank line gets the same `>` prefix so the
+quote is not broken.
 """
+import argparse
 import re
 import sys
 from pathlib import Path
 
-CONTENT_ROOT = Path(__file__).resolve().parent.parent / "itmo-notebook"
-IGNORED_DIRS = {".obsidian", "_ignore", ".git", "node_modules"}
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+import utils
+
 FENCE = re.compile(r"^\s*(```|~~~)")
 BLANK = re.compile(r"^\s*(?:>\s*)*$")
 EMBED = re.compile(
@@ -18,8 +24,8 @@ EMBED = re.compile(
 
 
 def frontmatter_end(lines):
-    """Возвращает индекс закрывающего `---` или None, если frontmatter не найден."""
-    if not lines or lines[0].strip() != "---":
+    """Index of the closing `---`, or None when there is no frontmatter."""
+    if not lines or lines[0].removeprefix("\ufeff").strip() != "---":
         return None
     for index in range(1, len(lines)):
         if lines[index].strip() == "---":
@@ -28,7 +34,7 @@ def frontmatter_end(lines):
 
 
 def rewrite(text):
-    """Возвращает новый текст и признак изменения, хвостовые переводы строк сохранены."""
+    """Return the new text and whether it changed; trailing newlines are preserved."""
     end = len(text) - len(text.rstrip("\n"))
     lines = text[: len(text) - end].split("\n")
     closing = frontmatter_end(lines)
@@ -57,7 +63,7 @@ def rewrite(text):
 
 
 def process_file(path, write=True):
-    """Обрабатывает один файл и возвращает True, если он изменён."""
+    """Process one file and return True if it changed."""
     path = Path(path)
     result, changed = rewrite(path.read_text(encoding="utf-8"))
     if changed and write:
@@ -66,26 +72,39 @@ def process_file(path, write=True):
 
 
 def process_tree(root, write=True):
-    """Обрабатывает заметки дерева и возвращает пути, требующие изменения."""
+    """Process the note tree and return the paths that need a change, relative to root."""
     root = Path(root)
-    notes = sorted(root.rglob("*.md"))
-    notes = [path for path in notes if not IGNORED_DIRS & set(path.relative_to(root).parts)]
-    return [path.relative_to(root) for path in notes if process_file(path, write)]
+    return [
+        path.relative_to(root)
+        for path in utils.markdown_files(root)
+        if process_file(path, write)
+    ]
 
 
-def main():
-    if [arg for arg in sys.argv[1:] if arg != "--check"]:
-        print("Использование: python scripts/ensure_blank_after_embed.py [--check]", file=sys.stderr)
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Insert a blank line after embeds.")
+    utils.add_root_argument(parser)
+    parser.add_argument("--check", action="store_true", help="report instead of writing")
+    arguments = parser.parse_args(argv)
+
+    try:
+        root = utils.resolve_root(arguments.root)
+    except ValueError as error:
+        print(error, file=sys.stderr)
         return 2
-    check_only = "--check" in sys.argv[1:]
 
-    changed = process_tree(CONTENT_ROOT, write=not check_only)
-    if check_only and changed:
-        print(f"Вставки без пустой строки: {len(changed)} файл(ов).", file=sys.stderr)
+    changed = process_tree(root, write=not arguments.check)
+    if arguments.check and changed:
+        print(f"Embeds without a blank line: {len(changed)} file(s).", file=sys.stderr)
+        for path in changed:
+            print(f"  {utils.display_path(root / path)}", file=sys.stderr)
         return 1
 
-    report = f"Modified {len(changed)} files:" if changed else "No changes needed"
-    print("\n".join([report, *(f"  {path}" for path in changed)]), file=sys.stderr)
+    report = f"Modified {len(changed)} file(s):" if changed else "No changes needed"
+    print(
+        "\n".join([report, *(f"  {utils.display_path(root / path)}" for path in changed)]),
+        file=sys.stderr,
+    )
     return 0
 
 

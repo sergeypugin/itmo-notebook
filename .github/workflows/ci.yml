@@ -81,7 +81,7 @@ jobs:
         run: npm ci --prefix scripts
 
       - name: Normalize content
-        run: python scripts/normalize.py
+        run: python scripts/main.py
 
       - name: Apply EditorConfig rules
         run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint fix
@@ -152,7 +152,7 @@ jobs:
         run: npm ci --prefix scripts
 
       - name: Check content normalization
-        run: python scripts/normalize.py --check
+        run: python scripts/main.py --check
 
       - name: Check EditorConfig rules
         run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint check
@@ -185,7 +185,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: "22.22.0"
           cache: npm
 
       - name: Install dependencies

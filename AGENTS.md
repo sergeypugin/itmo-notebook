@@ -2,6 +2,8 @@
 
 Ты -- агент редактора Zed на Windows. Всё содержимое `itmo-notebook/` публикуется через Quartz и поддерживает Obsidian Markdown.
 
+Для нормализации запускай `python scripts/main.py`, для проверки без изменений -- `python scripts/main.py --check`. По умолчанию обрабатывается каталог `itmo-notebook/`. `scripts/normalize.py` оставлен только как совместимый wrapper.
+
 ## МатАн
 
 При запросе написать главу переходи в `itmo-notebook/matan/sem3/lection_notes/lection_photo/lection-x` и оцифруй фотографии в единую заметку `itmo-notebook/matan/sem3/lection_notes/chapter-x.md`. Работай только с материалами запрошенной главы.

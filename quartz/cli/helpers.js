@@ -1,16 +1,7 @@
-import {
-  isCancel,
-  outro
-} from "@clack/prompts"
-import {
-  styleText
-} from "util"
-import {
-  contentCacheFolder
-} from "./constants.js"
-import {
-  spawnSync
-} from "child_process"
+import { isCancel, outro } from "@clack/prompts"
+import { styleText } from "util"
+import { contentCacheFolder } from "./constants.js"
+import { spawnSync } from "child_process"
 import fs from "fs"
 import path from "path"
 
@@ -32,27 +23,19 @@ export function exitIfCancel(val) {
 }
 
 export async function stashContentFolder(contentFolder) {
-  await fs.promises.rm(contentCacheFolder, {
-    force: true,
-    recursive: true
-  })
+  await fs.promises.rm(contentCacheFolder, { force: true, recursive: true })
   await fs.promises.cp(contentFolder, contentCacheFolder, {
     force: true,
     recursive: true,
     verbatimSymlinks: true,
     preserveTimestamps: true,
   })
-  await fs.promises.rm(contentFolder, {
-    force: true,
-    recursive: true
-  })
+  await fs.promises.rm(contentFolder, { force: true, recursive: true })
 }
 
 export function gitPull(origin, branch) {
   const flags = ["--no-rebase", "--autostash", "--no-edit", "--allow-unrelated-histories"]
-  const out = spawnSync("git", ["pull", ...flags, origin, branch], {
-    stdio: "inherit"
-  })
+  const out = spawnSync("git", ["pull", ...flags, origin, branch], { stdio: "inherit" })
   if (out.stderr) {
     throw new Error(styleText("red", `Error while pulling updates: ${out.stderr}`))
   } else if (out.status !== 0) {
@@ -61,20 +44,14 @@ export function gitPull(origin, branch) {
 }
 
 export async function popContentFolder(contentFolder) {
-  await fs.promises.rm(contentFolder, {
-    force: true,
-    recursive: true
-  })
+  await fs.promises.rm(contentFolder, { force: true, recursive: true })
   await fs.promises.cp(contentCacheFolder, contentFolder, {
     force: true,
     recursive: true,
     verbatimSymlinks: true,
     preserveTimestamps: true,
   })
-  await fs.promises.rm(contentCacheFolder, {
-    force: true,
-    recursive: true
-  })
+  await fs.promises.rm(contentCacheFolder, { force: true, recursive: true })
 }
 
 /**
@@ -98,9 +75,7 @@ export function symlinkOrCopySync(target, linkPath) {
         return
       } catch {
         const resolvedTarget = path.resolve(path.dirname(linkPath), target)
-        fs.cpSync(resolvedTarget, linkPath, {
-          recursive: true
-        })
+        fs.cpSync(resolvedTarget, linkPath, { recursive: true })
         return
       }
     }
@@ -125,9 +100,7 @@ export async function symlinkOrCopy(target, linkPath) {
         return
       } catch {
         const resolvedTarget = path.resolve(path.dirname(linkPath), target)
-        await fs.promises.cp(resolvedTarget, linkPath, {
-          recursive: true
-        })
+        await fs.promises.cp(resolvedTarget, linkPath, { recursive: true })
         return
       }
     }
