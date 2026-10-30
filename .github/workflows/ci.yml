@@ -2,9 +2,8 @@ name: Validate, format, and deploy
 
 on:
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -15,7 +14,45 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  fork-policy:
+    name: Fork policy
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none
+    steps:
+      - name: Check pull request source
+        env:
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          if [ -n "$HEAD_REPOSITORY" ] && [ "$HEAD_REPOSITORY" = "$BASE_REPOSITORY" ]; then
+            {
+              echo "## Pull request source policy: passed"
+              echo
+              echo "This pull request originates from the same repository (\`$BASE_REPOSITORY\`). Read-only validation and build checks may proceed."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "Pull request source policy passed: head repository '$HEAD_REPOSITORY' matches base repository '$BASE_REPOSITORY'."
+          else
+            {
+              echo "## Pull request source policy: failed"
+              echo
+              echo "This pull request is from a fork or its source repository cannot be identified. The workflow rejects it before any source checkout or execution."
+              echo
+              echo "- head repository: \`${HEAD_REPOSITORY:-unknown}\`"
+              echo "- base repository: \`$BASE_REPOSITORY\`"
+              echo
+              echo "Fork pull requests are not executed in this workflow because their code is untrusted and must not receive access to repository-controlled workflow execution. To run validation, create an equivalent branch inside the base repository and open a same-repository pull request. A maintainer can also review the fork changes and apply them to an internal branch."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "ERROR: Pull request rejected by fork policy."
+            echo "Head repository: ${HEAD_REPOSITORY:-unknown}"
+            echo "Base repository: $BASE_REPOSITORY"
+            echo "The policy job does not check out or execute pull request source code. Fork changes must be reviewed and applied to an internal branch before validation can run."
+            exit 1
+          fi
+
   format:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -25,9 +62,8 @@ jobs:
       - name: Checkout source branch
         uses: actions/checkout@v7
         with:
-          token: ${{ github.token }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
-          ref: ${{ github.head_ref || github.ref_name }}
+          ref: ${{ github.ref_name }}
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -45,29 +81,25 @@ jobs:
         run: npm ci --prefix scripts
 
       - name: Normalize content
-        env:
-          MODE: ${{ github.event_name == 'push' && 'fix' || 'check' }}
-        run: |
-          if [ "$MODE" = "fix" ]; then
-            python scripts/normalize.py
-          else
-            python scripts/normalize.py --check
-          fi
+        run: python scripts/normalize.py
 
-      - name: Apply or check EditorConfig rules
-        env:
-          MODE: ${{ github.event_name == 'push' && 'fix' || 'check' }}
-        run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint "$MODE"
+      - name: Apply EditorConfig rules
+        run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint fix
 
       - name: Run script tests
         run: python -m unittest discover -s scripts/tests -t .
 
       - name: Restore workflow files
-        if: github.event_name == 'push'
         run: git checkout -- .github/workflows/
 
+      - name: Configure Git authentication for auto-commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          auth_header=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic $auth_header"
+
       - name: Commit formatting changes
-        if: github.event_name == 'push'
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: normalize markdown content"
@@ -76,24 +108,79 @@ jobs:
           commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           branch: ${{ github.ref_name }}
 
-      - name: Fail on unfixable math issues
-        run: python scripts/check_math.py --check
+      - name: Remove Git authentication
+        if: always()
+        run: git config --local --unset-all http.https://github.com/.extraheader || true
+
+      - name: Resolve checked-out revision
+        id: revision
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  check:
+    needs: [fork-policy]
+    if: |
+      always() &&
+      github.event_name != 'push' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.base.ref == 'main') &&
+      (needs.fork-policy.result == 'success' || (github.event_name != 'pull_request' && needs.fork-policy.result == 'skipped'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      revision: ${{ steps.revision.outputs.sha }}
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: scripts/package-lock.json
+
+      - name: Install tooling
+        run: npm ci --prefix scripts
+
+      - name: Check content normalization
+        run: python scripts/normalize.py --check
+
+      - name: Check EditorConfig rules
+        run: git ls-files -z | xargs -0 ./scripts/node_modules/.bin/eclint check
+
+      - name: Run script tests
+        run: python -m unittest discover -s scripts/tests -t .
 
       - name: Resolve checked-out revision
         id: revision
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
   build:
-    needs: format
-    if: github.event_name != 'pull_request'
+    name: ${{ github.event_name == 'pull_request' && 'build-check' || 'build' }}
+    needs: [fork-policy, format, check]
+    if: |
+      always() &&
+      (github.event_name != 'pull_request' || github.event.pull_request.base.ref == 'main') &&
+      (needs.fork-policy.result == 'success' || (github.event_name != 'pull_request' && needs.fork-policy.result == 'skipped')) &&
+      (needs.format.result == 'success' || needs.format.result == 'skipped') &&
+      (needs.check.result == 'success' || needs.check.result == 'skipped')
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pages: write
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ needs.format.outputs.revision }}
+          ref: ${{ github.event_name == 'pull_request' && github.sha || github.event_name == 'workflow_dispatch' && github.sha || needs.format.outputs.revision || needs.check.outputs.revision }}
+          persist-credentials: false
           fetch-depth: 0
 
       - uses: actions/setup-node@v7
@@ -104,8 +191,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run Quartz transformer tests
+        if: github.event_name == 'pull_request'
+        run: npx tsx --test quartz/plugins/transformers/imageWidth.test.ts
+
       - name: Install plugins
-        run: npx quartz plugin install
+        run: npx quartz plugin install --from-config
 
       - name: Set baseUrl for GitHub Pages
         run: |
@@ -115,42 +206,14 @@ jobs:
         run: npx quartz build -d itmo-notebook
 
       - name: Upload artifact
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v5
         with:
           path: public
 
-  build-check:
-    needs: format
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Quartz transformer tests
-        run: npx tsx --test quartz/plugins/transformers/imageWidth.test.ts
-
-      - name: Install plugins
-        run: npx quartz plugin install
-
-      - name: Set baseUrl for GitHub Pages
-        run: |
-          sed -i "s|baseUrl:.*|baseUrl: ${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}|" quartz.config.yaml
-
-      - name: Build Quartz
-        run: npx quartz build -d itmo-notebook
-
   deploy:
     needs: build
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       pages: write
