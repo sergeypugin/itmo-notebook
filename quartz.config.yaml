@@ -230,6 +230,8 @@ plugins:
       excludedProperties:
         - title
         - modified
+        - description
+        - priority
       hidePropertiesView: false
       delimiters: ---
       language: yaml
