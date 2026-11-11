@@ -39,7 +39,7 @@ views:
       - property: formula.q_num
         direction: ASC
   - type: table
-    name: Sergey
+    name: Alllexey
     filters:
       and:
         - note.author == "Alllexey"
