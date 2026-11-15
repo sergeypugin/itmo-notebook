@@ -17,5 +17,6 @@ quartz/cli/tui/dist/
 _ignore
 
 # By me
-lection_photo
 __pycache__/
+lection_photo
+lection_extra
