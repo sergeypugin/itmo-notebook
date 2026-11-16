@@ -21,7 +21,7 @@ $$
 > \operatorname{tg}\alpha = \frac{\partial f}{\partial y}(x_0, y_0)
 > $$
 >
-> ![геометрический смысл частной производной](lection_notes/Attachments/geometric_meaning_tangent.jpg)
+> ![геометрический смысл частной производной](Attachments/geometric_meaning_tangent.jpg)
 >
 > Если провести плоскость, параллельную $ZOX$ ($y = y_0$), то аналогичное построение покажет, что тангенс угла наклона касательной будет равен частной производной $\frac{\partial f}{\partial x}(x_0, y_0)$.
 
@@ -248,7 +248,7 @@ $$
 
 Геометрический смысл дифференциала: дифференциал -- это приращение касательной.
 
-![геометрический смысл дифференциала|600](lection_notes/Attachments/differential_geometric_meaning.jpg)
+![геометрический смысл дифференциала|600](Attachments/differential_geometric_meaning.jpg)
 
 # 1.7 Производные от сложных функций
 
