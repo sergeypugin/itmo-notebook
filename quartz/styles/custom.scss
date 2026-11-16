@@ -1,5 +1,21 @@
 @use "./variables.scss" as *;
 
+// Thin scrollbars without classic arrow buttons everywhere (Edge/Windows would otherwise draw arrows)
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--lightgray) transparent;
+}
+
+// Math in callout titles must inherit the title color, not the body text color
+.callout-title-inner .katex {
+  color: inherit;
+}
+
+// Sidebars: no horizontal overflow
+.sidebar {
+  overflow-x: hidden;
+}
+
 // Search modal layout
 .search {
   & > .search-container {
